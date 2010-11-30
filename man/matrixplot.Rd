@@ -71,7 +71,6 @@ m <- daily2monthly(x, FUN=sum, na.rm=TRUE)
 
 # Creating a data.frame with monthly values per year in each column
 M <- matrix(m, ncol=12, byrow=TRUE)
-M <- as.data.frame(M)
 colnames(M) <- month.abb
 rownames(M) <- unique(format(time(m), "\%Y"))
 

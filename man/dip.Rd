@@ -22,7 +22,7 @@ Character indicating the starting date for creating the sequence. It has to be i
 Character indicating the ending date for creating the sequence. It has to be in the format indicated by \code{date.fmt}.
 }
   \item{date.fmt}{
-character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}. \cr
+character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. \cr
 ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric"}.
 }
   \item{out.type}{

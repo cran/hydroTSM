@@ -22,7 +22,7 @@ Character indicating the starting date for creating the sequence. It has to be i
 Character indicating the ending date for creating the sequence. It has to be in the format indicated by \code{date.fmt}.
 }
   \item{date.fmt}{
-Character indicating the format in which the dates are stored in \code{from} and \code{to}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}.
+Character indicating the format in which the dates are stored in \code{from} and \code{to}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}.
 }
   \item{out.type}{
 character indicating the type of result that is given by this function. Valid values are: \cr

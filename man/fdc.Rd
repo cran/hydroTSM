@@ -16,20 +16,20 @@ fdc(x, ...)
 
 \method{fdc}{default}(x,lQ.thr=0.7,hQ.thr=0.2, plot=TRUE, log="y", main="Flow Duration Curve", 
     xlab="\% Time flow equalled or exceeded", ylab="Q, [m3/s]", ylim, 
-    col="black", pch=1, lwd=1, lty=1, cex=0.4, leg.txt=NULL, verbose= TRUE, 
-    thr.shw=TRUE, new=TRUE, ...)
+    col="black", pch=1, lwd=1, lty=1, cex=0.4, cex.axis=1.2, cex.lab=1.2,
+    leg.txt=NULL, verbose= TRUE, thr.shw=TRUE, new=TRUE, ...)
 
 \method{fdc}{matrix}(x, lQ.thr=0.7, hQ.thr=0.2, plot=TRUE, log="y", main= "Flow Duration Curve",                         
     xlab="\% Time flow equalled or exceeded", ylab="Q, [m3/s]", ylim, 
     col=palette("default")[1:ncol(x)], pch=1:ncol(x), lwd=rep(1, ncol(x)), 
-    lty=1:ncol(x), cex=0.4, leg.txt= colnames(x), verbose=TRUE, 
-    thr.shw=TRUE, new=TRUE, ...)
+    lty=1:ncol(x), cex=0.4, cex.axis=1.2, cex.lab=1.2, leg.txt= colnames(x), 
+    verbose=TRUE, thr.shw=TRUE, new=TRUE, ...)
 
 \method{fdc}{data.frame}(x, lQ.thr=0.7, hQ.thr=0.2, plot=TRUE, log="y", main= "Flow Duration Curve",                         
      xlab="\% Time flow equalled or exceeded", ylab="Q, [m3/s]", ylim, 
      col=palette("default")[1:ncol(x)], pch=1:ncol(x), lwd=rep(1, ncol(x)), 
-     lty=1:ncol(x), cex=0.4, leg.txt= colnames(x), verbose=TRUE, 
-     thr.shw=TRUE, new=TRUE, ...)
+     lty=1:ncol(x), cex=0.4, cex.axis=1.2, cex.lab=1.2, leg.txt= colnames(x), 
+     verbose=TRUE, thr.shw=TRUE, new=TRUE, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -54,29 +54,35 @@ character, indicates which axis has to be plotted with a logarithmic scale. Defa
 See \code{\link[graphics]{plot}}. An overall title for the plot: see \code{\link[graphics]{title}}.
 }
   \item{xlab}{
-See \code{\link[graphics]{plot}}. A title for the x axis.
+A title for the x axis. See \code{\link[graphics]{plot}}. 
 }
   \item{ylab}{
-See \code{\link[graphics]{plot}}. A title for the y axis.
+A title for the y axis. See \code{\link[graphics]{plot}}. 
 }
   \item{ylim}{
-See \code{\link[graphics]{plot.default}}. The y limits of the plot.
+The y limits of the plot. See \code{\link[graphics]{plot.default}}. 
 }
   \item{col}{
-See \code{\link[graphics]{plot.default}}. The colors to be used for lines and points. Multiple colors can be specified so that each point can be given its own color. If there are fewer colors than points they are recycled in the standard fashion. Lines will all be plotted in the first colour specified.
+The colors to be used for lines and points. Multiple colors can be specified so that each point can be given its own color. If there are fewer colors than points they are recycled in the standard fashion. Lines will all be plotted in the first colour specified. See \code{\link[graphics]{plot.default}}. 
 }
   \item{pch}{
-See \code{\link[graphics]{plot.default}}. A vector of plotting characters or symbols: see \code{\link[graphics]{points}}.
+A vector of plotting characters or symbols: see \code{\link[graphics]{points}}. See \code{\link[graphics]{plot.default}}. 
 }
   \item{lwd}{
-See \code{\link[graphics]{plot.default}}. The line width, see \code{\link[graphics]{par}}.
+The line width, see \code{\link[graphics]{par}}. See \code{\link[graphics]{plot.default}}. 
 }
   \item{lty}{
-See \code{\link[graphics]{plot.default}}. The line type, see \code{\link[graphics]{par}}. 
+The line type, see \code{\link[graphics]{par}}. See \code{\link[graphics]{plot.default}}. 
 }
   \item{cex}{
 See \code{\link[graphics]{plot.default}}. A numerical vector giving the amount by which plotting characters and symbols should be scaled relative to the default.  \cr
 This works as a multiple of \env{par("cex")}. 'NULL' and 'NA' are equivalent to '1.0'.  Note that this does not affect annotation
+}
+  \item{cex.axis}{
+magnification of axis annotation relative to 'cex'.
+}
+  \item{cex.lab}{
+Magnification to be used for x and y labels relative to the current setting of 'cex'. See '?par'.
 }
   \item{leg.txt}{
 vector with the names that have to be used for each column of \code{x}.

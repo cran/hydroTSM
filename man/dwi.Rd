@@ -40,7 +40,7 @@ Character indicating the ending date for the computations. It has to be in the f
 When \code{x} is a data.frame and this value is not provided, the date corresponding to the last row of \code{x} is used
 }
   \item{date.fmt}{
-character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}. \cr
+character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. \cr
 ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric"}. 
 }
   \item{tstep}{

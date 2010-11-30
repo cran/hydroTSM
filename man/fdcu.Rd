@@ -17,8 +17,8 @@ fdcu(x, lband, uband, ...)
 \method{fdcu}{default}(x, lband, uband, sim, lQ.thr=0.7, hQ.thr=0.2, plot=TRUE, log="y", 
      main="Flow Duration Curve", xlab="\% Time flow equalled or exceeded", 
      ylab="Q, [m3/s]", ylim, col=c("black", "red"), pch=c(1, 15), 
-     lwd=c(1, 0.8), lty=c(1, 3), cex=0.2, leg.txt= c("Qobs", "Qsim", "95PPU"), 
-     verbose= TRUE, thr.shw=TRUE, border=NA, 
+     lwd=c(1, 0.8), lty=c(1, 3), cex=0.2, cex.axis=1.2, cex.lab=1.2,
+     leg.txt= c("Qobs", "Qsim", "95PPU"), verbose= TRUE, thr.shw=TRUE, border=NA, 
      bands.col="lightcyan", bands.density=NULL, bands.angle=45, new=TRUE, ...)
 
 \method{fdcu}{matrix}(x, lband, uband, sim, lQ.thr=0.7, hQ.thr=0.2, plot=TRUE, log="y", 
@@ -28,10 +28,10 @@ fdcu(x, lband, uband, ...)
      pch=matrix(rep(c(1, 15), ncol(x)), byrow=TRUE, ncol=2),
      lwd=matrix(rep(c(1, 0.8), ncol(x)), byrow=TRUE, ncol=2),
      lty=matrix(rep(c(1, 3), ncol(x)), byrow=TRUE, ncol=2),                        
-     cex=rep(0.1, ncol(x)), leg.txt=c("OBS", colnames(x), "95PPU"),
-     verbose= TRUE, thr.shw=TRUE, border=rep(NA, ncol(x)), 
-     bands.col=rep("lightcyan", ncol(x)), bands.density=rep(NULL, ncol(x)),
-     bands.angle=rep(45, ncol(x)), new=TRUE, ...)
+     cex=rep(0.1, ncol(x)), cex.axis=1.2, cex.lab=1.2, 
+     leg.txt=c("OBS", colnames(x), "95PPU"),  verbose= TRUE,  thr.shw=TRUE, 
+     border=rep(NA, ncol(x)), bands.col=rep("lightcyan", ncol(x)), 
+     bands.density=rep(NULL, ncol(x)), bands.angle=rep(45, ncol(x)), new=TRUE, ...)
 
 \method{fdcu}{data.frame}(x, lband, uband, sim, lQ.thr=0.7, hQ.thr=0.2, plot=TRUE, log="y", 
      main="Flow Duration Curve", xlab="\% Time flow equalled or exceeded", 
@@ -40,10 +40,10 @@ fdcu(x, lband, uband, ...)
      pch=matrix(rep(c(1, 15), ncol(x)), byrow=TRUE, ncol=2),
      lwd=matrix(rep(c(1, 0.8), ncol(x)), byrow=TRUE, ncol=2),
      lty=matrix(rep(c(1, 3), ncol(x)), byrow=TRUE, ncol=2),                        
-     cex=rep(0.1, ncol(x)), leg.txt=c("OBS", colnames(x), "95PPU"),
-     verbose= TRUE, thr.shw=TRUE, border=rep(NA, ncol(x)), 
-     bands.col=rep("lightcyan", ncol(x)), bands.density=rep(NULL, ncol(x)),
-     bands.angle=rep(45, ncol(x)), new=TRUE, ...)
+     cex=rep(0.1, ncol(x)), cex.axis=1.2, cex.lab=1.2,
+     leg.txt=c("OBS", colnames(x), "95PPU"), verbose= TRUE, thr.shw=TRUE, 
+     border=rep(NA, ncol(x)), bands.col=rep("lightcyan", ncol(x)), 
+     bands.density=rep(NULL, ncol(x)), bands.angle=rep(45, ncol(x)), new=TRUE, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -104,6 +104,12 @@ See \code{\link[graphics]{plot.default}}. The line type, see \code{\link[graphic
   \item{cex}{
 See \code{\link[graphics]{plot.default}}. A numerical vector giving the amount by which plotting characters and symbols should be scaled relative to the default.  
 This works as a multiple of \env{par("cex")}. 'NULL' and 'NA' are equivalent to '1.0'. Note that this does not affect annotation.
+}
+  \item{cex.axis}{
+magnification of axis annotation relative to 'cex'.
+}
+  \item{cex.lab}{
+Magnification to be used for x and y labels relative to the current setting of 'cex'. See '?par'.
 }
   \item{leg.txt}{
 vector with the names that have to be used for each column of \code{x}.

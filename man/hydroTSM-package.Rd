@@ -15,12 +15,12 @@ Bugs / comments / questions / collaboration of any kind are very welcomed, and i
 \tabular{ll}{
 Package: \tab hydroTSM\cr
 Type: \tab Package\cr
-Version: \tab 0.2-0\cr
-Date: \tab 2010-10-10\cr
+Version: \tab 0.2-1\cr
+Date: \tab 2010-11-30\cr
 License: \tab GPL \cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Sun Oct  10 22:47:19 CEST 2010; MZB \cr
-Built: \tab R version 2.11.1 (2010-05-31); i486-pc-linux-gnu \cr
+Packaged: \tab Tue Nov 30 16:59:37 CET 2010; MZB \cr
+Built: \tab R version 2.12.0 (2010-10-15); i486-pc-linux-gnu \cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }

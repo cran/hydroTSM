@@ -1,15 +1,4 @@
 ############
-# v 0.X-X: #
-############
-*) Release Date: ongoing...
-
-Modified functions:
-*) 'dmc'         : it was made public.
-*) 'drty.dcs2zoo': it was made public.
-*) 'interpol1'   : it was made public.
-
-
-############
 # v 0.2-0: #
 ############
 *) Release Date: 10-Oct-2010

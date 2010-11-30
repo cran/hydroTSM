@@ -42,7 +42,7 @@ Logical. Should missing values be removed? \cr
 -) \kbd{FALSE}: if there is AT LEAST one NA within a year, the corresponding annual value is NA.
 }
   \item{out.fmt}{
-Character indicating the format for the output time series. See \code{format} in \code{\link[base]{format.Date}}. Possible values are: \cr
+Character indicating the format for the output time series. See \code{format} in \code{\link[base]{as.Date}}. Possible values are: \cr
 -) \kbd{\%Y}        : only the year will be used for the time. Default option. (e.g., "1961" "1962"...) \cr
 -) \kbd{\%Y-\%m-\%d}: a complete date format will be used for the time. (e.g., "1961-01-01" "1962-01-01"...)
 }
@@ -53,7 +53,7 @@ If \code{dates} is a factor, it is converted into Date class, using the date for
 If \code{dates} is already of Date class, the code verifies that the number of days on it be equal to the number of element in \code{x}
 }
   \item{date.fmt}{
-character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}. \cr
+character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. \cr
 ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric"}.
 }
   \item{out.type}{

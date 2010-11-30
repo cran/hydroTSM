@@ -24,7 +24,7 @@ Character indicating the starting date for creating the sequence. It has to be i
 Character indicating the ending date for creating the sequence. It has to be in the format indicated by \code{date.fmt}. The default value corresponds to the date of the last element of \code{x}.
 }
   \item{date.fmt}{
-character indicating the format in which the dates are stored in \code{from} and \code{to}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}. 
+character indicating the format in which the dates are stored in \code{from} and \code{to}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. 
 }
   \item{tstep}{
 character, indicating the time step used for sampling \code{x}, e.g., \kbd{days}, \kbd{months}, \kbd{years}.

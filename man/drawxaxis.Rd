@@ -9,7 +9,8 @@ Customized 'x' axis
 For a nicer ts plot, this function draws a customized x axis, with daily, monthly, or annual time marks and labels.
 }
 \usage{
-drawxaxis(x, tick.tstep = "months", lab.tstep = "years", cex.axis=1, ...)
+drawxaxis(x, tick.tstep = "months", lab.tstep = "years", 
+          lab.fmt, cex.axis=1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,9 @@ Character indicating the time step that have to be used for putting the ticks on
 }
   \item{lab.tstep}{
 Character indicating the time step that have to be used for putting the labels on the time axis. Valid values are: \kbd{days}, \kbd{months}, \kbd{years}. 
+}
+  \item{lab.fmt}{
+Character indicating with the format to be used for the label of the axis. See \code{format} in \code{\link[base]{as.Date}}. If not specified, it will try \kbd{"\%Y-\%m-\%d"} when \code{lab.tstep=="days"}, \kbd{"\%b"} when \code{lab.tstep=="month"}, and \kbd{"\%Y"} when \code{lab.tstep=="year"}. 
 }
   \item{cex.axis}{
 magnification of axis annotation relative to \code{cex} (See \code{\link[graphics]{par}}).

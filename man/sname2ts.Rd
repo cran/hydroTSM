@@ -10,7 +10,7 @@ This function takes a data.frame whose columns contains the time series of sever
 }
 \usage{
 sname2ts(x, sname, dates, date.fmt = "\%Y-\%m-\%d", var.type, 
-         tstep.out = "daily", FUN, na.rm = TRUE)
+         tstep.out = "daily", FUN, na.rm = TRUE, from, to)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,18 +24,18 @@ Character representing the name of a station, which have to correspond to one co
   \item{dates}{
 numeric, factor, Date object indicating how to obtain the dates corresponding to the \code{sname} station. \cr
 -) If \code{dates} is a number, it indicates the index of the column in \code{x} that stores the dates \cr
--) If \code{dates} is a factor, it is converted into Date class, using the date format  specified by \code{date.fmt} \cr
+-) If \code{dates} is a factor, it is converted into Date class, using the date format specified by \code{date.fmt} \cr
 -) If \code{dates} is already of Date class, the code verifies that the number of days in \code{dates} be equal to the number of element in \code{x}
 }
   \item{date.fmt}{
-character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{format.Date}}. \cr
+character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. \cr
 ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric"}.
 }
   \item{var.type}{
 character representing the type of variable being plotted. Used for determining the function used for computing the monthly or/and annual values when \code{FUN} is missing. Valid values are: \cr
--) \kbd{Precipitation} => FUN = sum  \cr
--) \kbd{Temperature}   => FUN = mean \cr
--) \kbd{Flow}          => FUN = mean
+-) \kbd{Precipitation} => \code{FUN=sum}  \cr
+-) \kbd{Temperature}   => \code{FUN= mean} \cr
+-) \kbd{Flow}          => \code{FUN= mean}
 }
   \item{tstep.out}{
 character that defines the time step of the desired output time series. Valid values are: \cr
@@ -49,6 +49,14 @@ Function that have to be applied for transforming from daily to monthly or annua
 }
   \item{na.rm}{
 a logical value indicating whether 'NA' values should be stripped before the computation proceeds.
+}
+  \item{from}{
+OPTIONAL, used for extracting a subset of values. \cr
+Character indicating the starting date for the values to be extracted. It must be provided in the format specified by \code{date.fmt}.
+}
+  \item{to}{
+OPTIONAL, used for extracting a subset of values. \cr
+Character indicating the ending date for the values to be extracted. It must be provided in the format specified by \code{date.fmt}.
 }
 }
 %%\details{
