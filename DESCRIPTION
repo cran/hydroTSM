@@ -2,8 +2,8 @@ Package: hydroTSM
 Type: Package
 Title: Time series management, analysis and interpolation for
         hydrological modelling
-Version: 0.2-1
-Date: 2010-11-30
+Version: 0.2-2
+Date: 2011-04-14
 Author: Mauricio Zambrano-Bigiarini
 Maintainer: Mauricio Zambrano-Bigiarini
         <mauricio.zambrano@ing.unitn.it>
@@ -19,10 +19,11 @@ Description: S3 functions for management, analysis, interpolation and
         datasets that can be included in this package for academic
         purposes.
 License: GPL (>= 2)
-Depends: R (>= 2.8.0), zoo, gstat, automap
+Depends: R (>= 2.10.0), zoo, gstat, automap
 Suggests: sp, maptools, e1071, rgdal, lattice
-URL: http://cran.r-project.org/web/packages/hydroTSM/
+URL: http://cran.r-project.org/web/packages/hydroTSM/,
+        http://www.rforge.net/hydroTSM/
 LazyLoad: yes
-Packaged: 2010-11-30 16:14:25 UTC; zambrhe
+Packaged: 2011-04-14 10:40:53 UTC; zambrhe
 Repository: CRAN
-Date/Publication: 2010-11-30 19:46:02
+Date/Publication: 2011-04-14 16:45:41
