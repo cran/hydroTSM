@@ -1,8 +1,32 @@
 NEWS/ChangeLog for hydroTSM
 --------------------------
 
+0.3-5	04-Jul-2012
+        o 'dwi.zoo'                  : fixed display error for years and months when 'matrixplot' is used to plot the results of 'dwi' applied 
+                                       to a matrix or data.frame.
+                                       This error appeared after an update of the zoo package, and did not imply any error in the computation, 
+                                       only in the display of the years/months
+        o 'izoo2rzoo.zoo'            : now works properly with matrix and data.frame objects 
+        o 'hypsometric'              : now is able to deal with raster objects with more than 1 band 
+                                       (thanks to Jan Schwanbeck for reporting the issue and proposing a solution) 
+        o 'daily2monthly.data.frame' : -) calls to 'as.Date' were changed to 'zoo::as.Date', to avoid possible conflicts with zoo >= 1.7-2
+                                       -) wrong labelling of months was fixed (only occurred when out.type="db")
+        o 'daily2annual.data.frame'  : -) calls to 'as.Date' were changed to 'zoo::as.Date', to avoid possible conflicts with zoo >= 1.7-2
+        o 'daily2annual.zoo'         : -) calls to 'as.Date' were changed to 'zoo::as.Date', to avoid possible conflicts with zoo >= 1.7-2
+                                       -) default value for 'out.fmt' was changed from "%Y" to "%Y-%m-%d" (this is the default for zoo objects)
+        o 'sfreq'                    : -) now gives the correct sampling frequency for zoo objects that are matrix/data.frame
+                                       -) now only works with zoo objects (before it also accepted ts objects)
+        
+        o 'hydroplot'                : -) calls to 'as.Date' were changed to 'zoo::as.Date', to avoid possible conflicts with zoo >= 1.7-2
+        o 'monthlyfunction'          : -) calls to 'as.Date' were changed to 'zoo::as.Date', to avoid possible conflicts with zoo >= 1.7-2 
+                                          (only for data.frame/matrix objects)
+                                       -) fixed bug in the labelling of columns of the output object (only for data.frame/matrix objects)
+        o 'hydrokrige'               : -) fixed visualisation error "Error using packet 1. 'breaks' are not unique".
+                                       
+        
 0.3-4	03-May-2012
-        o 'fdc': new arguments 'leg.cex' and 'leg.pos' to provide better control over the legend
+        o 'fdc' : new arguments 'leg.cex' and 'leg.pos' to provide better control over the legend
+        o 'fdcu': new arguments 'leg.cex' and 'leg.pos' to provide better control over the legend
         
 0.3-3	07-Nov-2011
         o new 'fdc.zoo', which works with vectors, matrixes and/or data frames
@@ -95,27 +119,7 @@ NEWS/ChangeLog for hydroTSM
         o 'smry'            : -) new 'smry.zoo'	
                               -) much faster than before for matrixes and data.frames 	                            
                               -) it works with xts objects as well. 			      
-	o Some 'as.Date' calls were changed to 'zoo:ad.Date', in order to work properly with zoo >= 1.7-2
-	
-
-0.2-2	14-Apr-2011
-	o 'fdc' and 'fdcu': new argument 'yat', for setting the position of the 'y' axis labels  when 'log="y"' (thanks to Santosh Aryal !)
-	o All the 'print' calls used to display information messages were replaced by a call to 'message'.
-	o SVN started to be used for package development in Rforge (thanks to Simon Urbanek for his great support)
-	o Vignette added ('Introductory Analysis of Daily Precipitation Data with hydroTSM')
-	o Updated dependence on R >= 2.10.0
-	
-
-0.2-1	30-Nov-2010
-
-	o R functions were split up into individual files.
-	o 'dip', 'mip', 'yip': added error checking for 'out.type'
-	o 'drawxaxis': new argument: lab.fmt, for specifying the format of the axis' labels
-	o 'hydroplot', 'sname2plot': removed argument 'sname', and new arguments: 'lab.fmt', 'xlab', 'ylab', 'col', 
-	  'cex', 'cex.main', 'cex.axis', 
-	  'cex.lab', 'lty', 'lwd', '...'
-	o 'sname2ts': new arguments: 'from', 'to', 'date.fmt'
-	o 'fdc', 'fdcu': new arguments: 'cex.axis', 'cex.lab'
+	o Some 'as.Date' calls were changed to 'zoo::as.Date', in order to work properly with zoo >= 1.7-2
 
 
 
@@ -123,6 +127,8 @@ NEWS/ChangeLog for hydroTSM
 # Previous Releases (see old file 'WhatsNew.txt)' #
 ###################################################
 
+0.2-2	14-Apr-2011
+0.2-1	30-Nov-2010
 0.2-0	10-Oct-2010
 0.1.7	05-Mar-2009 (It was never released, because it finally becomes v0.2-0)
 0.1.6	30-Nov-2009
