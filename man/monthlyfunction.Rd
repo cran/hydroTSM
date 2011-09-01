@@ -1,8 +1,10 @@
 \name{monthlyfunction}
 \Rdversion{1.1}
-\alias{monthlyfunction.data.frame}
-\alias{monthlyfunction.default}
 \alias{monthlyfunction}
+\alias{monthlyfunction.zoo}
+\alias{monthlyfunction.default}
+\alias{monthlyfunction.matrix}
+\alias{monthlyfunction.data.frame}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Monthly Function
@@ -15,13 +17,18 @@ monthlyfunction(x, ...)
 
 \method{monthlyfunction}{default}(x, FUN, na.rm = TRUE, ...)
 
+\method{monthlyfunction}{zoo}(x, FUN, na.rm=TRUE,...)
+
 \method{monthlyfunction}{data.frame}(x, FUN, na.rm = TRUE, dates, date.fmt = "\%Y-\%m-\%d", 
+             out.type = "data.frame", verbose = TRUE, ...)
+             
+\method{monthlyfunction}{matrix}(x, FUN, na.rm = TRUE, dates, date.fmt = "\%Y-\%m-\%d", 
              out.type = "data.frame", verbose = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-zoo, data.frame or matrix object, with daily or monthly time series. \cr
+zoo, xts, data.frame or matrix object, with daily or monthly time series. \cr
 Measurements at several gauging stations can be stored in a data.frame of matrix object, and in that case, each column of \code{x} represent the time series measured in each gauging station, and the column names of \code{x} have to correspond to the ID of each station (starting by a letter).
 }
   \item{FUN}{
@@ -33,16 +40,19 @@ Logical. Should missing values be removed? \cr
 -) \kbd{FALSE}: if there is AT LEAST one NA within a month, the corresponding monthly value will be NA 
 }
   \item{dates}{
+It is only used when \code{x} is not a zoo object. \cr
 numeric, factor, Date indicating how to obtain the dates. \cr
 If \code{dates} is a number, it indicates the index of the column in \code{x} that stores the dates \cr
 If \code{dates} is a factor, it is converted into 'Date' class, using the date format specified by \code{date.fmt} \cr
 If \code{dates} is already of Date class, the code verifies that the number of days in \code{dates} be equal to the number of elements in \code{x}
 }
   \item{date.fmt}{
+It is only used when \code{x} is not a zoo object. \cr
 character indicating the format in which the dates are stored in \var{dates}, e.g. \kbd{\%Y-\%m-\%d}. See \code{format} in \code{\link[base]{as.Date}}. \cr
 ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric"}.
 }
   \item{out.type}{
+It is only used when \code{x} is a matrix or data.frame. \cr
 Character defining the desired type of output. Valid values are: \cr
 -) \kbd{data.frame}: a data.frame, with 12 columns representing the months, and as many rows as gauging stations are included in \code{x} \cr
 -) \kbd{db}        : a data.frame, with 4 columns will be produced. Useful for a posterior boxplot \cr
@@ -120,24 +130,30 @@ x <- EbroPPtsMonthly
 ## Dates of 'x'
 dates <- as.Date(x[,1])
 
-# Amount of years in 'x' (needed for computing the average)
-nyears <- length( seq(from=dates[1], to=dates[length(dates)], by="years") )
-
-
 ## Monthly precipitation of all the stations in 'x'
 \dontrun{
 
 ## Sum of the monthly values in each station of 'x'
-m <- monthlyfunction(x, FUN=sum, dates=1, out.type="db")
+z <- zoo( x[, 2:ncol(x)], dates)
+
+# Amount of years in 'x' (needed for computing the average)
+nyears <- yip(from=start(z), to=end(z), out.type="nmbr" )
+
+m <- monthlyfunction(z, FUN=sum)
+
+
+## Another way of computing the sum of the monthly values in each station of 'x'
+## This way is usefult for posteriori boxplots
+m2 <- monthlyfunction(x, FUN=sum, dates=1, out.type="db")
 
 ## Average monthly precipitation in each station of 'x'
-m$Value <- m$Value / nyears 
+m2$Value <- m2$Value / nyears 
 
 ## Creating monthly factors
-m$Month <- factor(m$Month, levels=month.abb)
+m2$Month <- factor(m2$Month, levels=month.abb)
 
 ## boxplot of the monthly values in all stations
-boxplot(Value ~ Month, m, col="lightyellow", main="Monthly Precipitation, [mm/month]")
+boxplot(Value ~ Month, m2, col="lightyellow", main="Monthly Precipitation, [mm/month]")
 }
 
 }

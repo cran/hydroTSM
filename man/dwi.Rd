@@ -1,8 +1,10 @@
 \name{dwi}
 \Rdversion{1.1}
-\alias{dwi.data.frame}
-\alias{dwi.default}
 \alias{dwi}
+\alias{dwi.default}
+\alias{dwi.zoo}
+\alias{dwi.data.frame}
+\alias{dwi.matrix}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Days with Information
@@ -13,10 +15,16 @@ This function generates a table indicating the number of days with information (
 \usage{
 dwi(x, ...)
 
-\method{dwi}{default}(x, out.unit = "years", from = range(time(x))[1], to = range(time(x))[2], 
+\method{dwi}{default}(x, out.unit = "years", from = start(x), to = end(x), 
+     date.fmt = "\%Y-\%m-\%d", tstep="days", ...)
+     
+\method{dwi}{zoo}(x, out.unit = "years", from = start(x), to = end(x), 
      date.fmt = "\%Y-\%m-\%d", tstep="days", ...)
 
 \method{dwi}{data.frame}(x, out.unit = "years", from, to, date.fmt = "\%Y-\%m-\%d", tstep="days", 
+     dates = 1, verbose = TRUE, ...)
+     
+\method{dwi}{matrix}(x, out.unit = "years", from, to, date.fmt = "\%Y-\%m-\%d", tstep="days", 
      dates = 1, verbose = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,9 +35,9 @@ Measurements at several gauging stations can be stored in a data.frame of matrix
 }
   \item{out.unit}{
 aggregation time for the computation of the amount of days with information. Valid values are: \cr
--) \kbd{month}: monthly;  \cr
--) \kbd{year} : annual;   \cr
--) \kbd{mpy}  : month per year
+-) \kbd{months}: monthly;  \cr
+-) \kbd{years} : annual;   \cr
+-) \kbd{mpy}   : month per year (not available for data.frames)
 }
   \item{from}{
 Character indicating the starting date for the computations. It has to be in the format indicated by \code{date.fmt}.\cr
@@ -45,6 +53,7 @@ ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric
 }
   \item{tstep}{
 Time step used for storing the values in \code{x}. Valid values are: \kbd{days}, \kbd{months}, \kbd{years}.
+Since the version 0.3-0 of hydroTSM, this argument is not required any more, because it is not used any longer.
 }
   \item{dates}{
 numeric, factor or Date object indicating how to obtain the dates for each column of \code{x}\cr

@@ -177,14 +177,16 @@ mspplot <- function(x,
 
   # 6.4)Polygon with the catchment, for being put over the interpolations
 	# Reading the SubCATCHMENTS of the CATCHMENT
-	require(maptools) #it is necessary for usign the function "readShapePoly"
+	#require(maptools) #it is necessary for usign the function "readShapePoly"
 	if (class(subcatchments) == "character") {
 
-	   if (verbose) message(paste("[reading GIS Subcatchments in: '", basename(subcatchments), "'...]", sep="") )
-	   SubCatchments.shp <- readShapePoly(subcatchments, proj4string=p4s, IDvar= IDvar)
-	   # Number of Subcatchmnets
-	   nSub <- nrow(SubCatchments.shp@data)
-	   if (verbose) message(paste("[Subcatchments found:", nSub, sep=" ") )
+           if (require(maptools)) {
+	     if (verbose) message(paste("[reading GIS Subcatchments in: '", basename(subcatchments), "'...]", sep="") )
+	     SubCatchments.shp <- maptools:::readShapePoly(subcatchments, proj4string=p4s, IDvar= IDvar)
+	     # Number of Subcatchmnets
+	     nSub <- nrow(SubCatchments.shp@data)
+	     if (verbose) message(paste("[Subcatchments found:", nSub, sep=" ") )
+	   } else stop( paste("Missing package: You need 'maptools' for reading the '", basename(subcatchments), "' shapefile", sep="") )
 
 	} else {	#  If the user already provided 'subcatchments' as an 'SpatialPolygonsDataFrame' object
 
@@ -203,10 +205,10 @@ mspplot <- function(x,
   # 6.5) Points with the stations used for computing the interpolations, for being put over the interpolations
          if (stations.plot) {
 	     x.gis <- stations.gis
-	     require(sp)
-	     coordinates(x.gis) <- ~ x + y
+	     #require(sp)
+	     sp::coordinates(x.gis) <- ~ x + y
 	     # Projecting the coordinates of the meteorological stations into the right system
-	     proj4string(x.gis) = p4s
+	     sp::proj4string(x.gis) = p4s
 	     stations.l2 = list("sp.points", SpatialPoints(x.gis, proj4string = p4s), col="black", first=FALSE);
 
 	     # 6.6) Legend with the Minimum, Maximum and Mean interpolated values
@@ -251,10 +253,10 @@ mspplot <- function(x,
 		  } # END if (stations.plot)
 
 	 if (class(col.at)=="numeric") {
-	   a <- spplot(x, sp.layout = map.layout, scales=list(draw=TRUE, y=list(rot=90), abbreviate=FALSE),
+	   a <- sp::spplot(x, sp.layout = map.layout, scales=list(draw=TRUE, y=list(rot=90), abbreviate=FALSE),
                        main=main, col.regions= ColorRamp(col.nintv), at=col.at, as.table=TRUE )
 	} else {
-	  a <- spplot(x, sp.layout = map.layout, scales=list(draw=TRUE, y=list(rot=90), abbreviate=FALSE),
+	  a <- sp::spplot(x, sp.layout = map.layout, scales=list(draw=TRUE, y=list(rot=90), abbreviate=FALSE),
                       main=main, col.regions= ColorRamp(col.nintv), as.table=TRUE )
 
 	  } # ELSE end

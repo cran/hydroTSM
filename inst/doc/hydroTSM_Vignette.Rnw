@@ -4,10 +4,9 @@
 %\pdfbookmark[0]{Titlepage}{title} % Sets a PDF bookmark for the title page
 \title{Tutorial for Introductory Analysis of \\
        Daily Precipitation Data with hydroTSM}
-\date{Oct 2010}
+\date{Oct 2010, Apr 2011, Aug 2011}
 
-%\VignetteIndexEntry{An R Package for time series management, analysis and interpolation for hydrological modelling}
-%\VignetteDepends{zoo, gstat, automap}
+%\VignetteIndexEntry{Tutorial for introductory analysis of daily precipitation data with hydroTSM}
 %\VignetteKeyword{hydrology}
 %\VignetteKeyword{hydrological modelling}
 
@@ -19,10 +18,10 @@
 \section{Installation}
 \label{sec:Installation}
 
-Installing hydroTSM, along with the required and suggested packages:
+Installing hydroTSM:
 
 <<eval=FALSE>>=
-install.packages("hydroTSM", dependencies=c("Depends", "Suggests"))
+install.packages("hydroTSM")
 @
 
 
@@ -31,21 +30,21 @@ install.packages("hydroTSM", dependencies=c("Depends", "Suggests"))
 
 \begin{enumerate}
 
-\item Loading the \textit{hydroTSM} library, which contains the data and the functions used in this analysis
+\item Loading the \textit{hydroTSM} library, which contains data and functions used in this analysis.
 <<>>=
 library(hydroTSM)
 @
 
-\item Loading daily streamflows at the station San Martino di Castrozza, Trento Province, Italy, with data from 01/Jan/1921 to 31/Dec/1990.
+\item Loading daily precipitation data at the station San Martino di Castrozza, Trento Province, Italy, with data from 01/Jan/1921 to 31/Dec/1990.
 
 <<>>=
 data(SanMartinoPPts)
 @
 
-\item Selecting only a 3-years time-slice for the analysis
+\item Selecting only a 6-years time-slice for the analysis
 
 <<>>=
-x <- window(SanMartinoPPts, start=as.Date("1988-01-01"))
+x <- window(SanMartinoPPts, start=as.Date("1985-01-01"))
 @
 
 \item Monthly values of precipitation
@@ -60,7 +59,7 @@ dates <- time(x)
 
 \item Amount of years in 'x' (needed for computations)
 <<>>=
-( nyears <- length( seq(from=dates[1], to=dates[length(dates)], by="years") ) )
+( nyears <- yip(from=start(x), to=end(x), out.type="nmbr" ) )
 @
 
 \end{enumerate}
@@ -77,11 +76,11 @@ smry(x)
 @
 
 
-\item Using the \textit{hydroplot} function, which (by default) plots 9 different graphs: 3 ts plots, 3 boxplots and 3 histograms summarizing 'x' (for this example, only daily and monthly plots are produced)
+\item Using the \textit{hydroplot} function, which (by default) plots 9 different graphs: 3 ts plots, 3 boxplots and 3 histograms summarizing 'x'. For this example, only daily and monthly plots are produced, and only data starting on 01-Jan-1987 are plotted.
 
 \begin{center}
 <<fig=TRUE, pdf=TRUE, eps=FALSE, width=10, height=8>>=
-hydroplot(x, var.type="Precipitation", sname="San Martino", pfreq = "dm")
+hydroplot(x, var.type="Precipitation", main="at San Martino", pfreq = "dm", from="1987-01-01")
 @
 \end{center}
 
@@ -122,22 +121,24 @@ matrixplot(M, ColorRamp="Precipitation",
 
 \begin{enumerate}
 
-\item Annual Values
+\item Annual values of precipitation
 <<>>=
-daily2annual(x, FUN=sum, na.rm=T)
+daily2annual(x, FUN=sum, na.rm=TRUE)
 @
 
-\item Average Annual Precipitation
+\item Average annual precipitation
 
 Obvious way:
 
 <<>>=
-mean( daily2annual(x, FUN=sum, na.rm=T) )
+mean( daily2annual(x, FUN=sum, na.rm=TRUE) )
 @
 
 Another way (more useful for streamflows, where \texttt{FUN=mean}):
 
-The function \textit{annualfunction} applies \texttt{FUN} twice over \texttt{x}: (i) firstly, over all the elements of \texttt{x} belonging to the same year, in order to obtain the corresponding annual values, and (ii) secondly, over all the annual values of \texttt{x} previously obtained, in order to obtain a single annual value.
+The function \textit{annualfunction} is applied \texttt{FUN} twice over \texttt{x}: 
+( i) firstly, over all the elements of \texttt{x} belonging to the same year, in order to obtain the corresponding annual values, and
+(ii) secondly, over all the annual values of \texttt{x} previously obtained, in order to obtain a single annual value.
 
 <<>>=
 annualfunction(x, FUN=sum, na.rm=TRUE) / nyears
@@ -152,7 +153,7 @@ annualfunction(x, FUN=sum, na.rm=TRUE) / nyears
 
 
 \begin{enumerate}
-\item Median of the monthly values at station 'x'. Not needed, just for looking at these values in the boxplots
+\item Median of the monthly values at station 'x'. Not needed, just for looking at these values in the boxplot.
 
 <<>>=
 monthlyfunction(m, FUN=median, na.rm=TRUE)
@@ -200,39 +201,22 @@ seasonalfunction(x, FUN=sum, na.rm=TRUE) / nyears
 
 
 \item Plotting the time evolution of the seasonal precipitation values
-<<fig=TRUE, pdf=TRUE, eps=FALSE>>=
-par(mfcol = c(2, 2))
-plot(DJF, type="o", cex=0.4, col="blue", xlab="Time", 
-     ylab="Precipitation, [mm]", ylim=c(0, 1000), 
-     main="Winter (DJF) Precipitation" )
-plot(MAM, type="o", cex=0.4, col="blue", xlab="Time", 
-     ylab="Precipitation, [mm]", ylim=c(0, 1000),
-     main="Spring (MAM) Precipitation")
-plot(JJA, type="o", cex=0.4, col="blue", xlab="Time", 
-     ylab="Precipitation, [mm]", ylim=c(0, 1000),
-     main="Summer (JJA) Precipitation" )
-plot(SON, type="o", cex=0.4, col="blue", xlab="Time", 
-     ylab="Precipitation, [mm]", ylim=c(0, 1000),
-     main="Autumn (SON) Precipitation")
-@
-
-
-\item Boxplots of the seasonal precipitation values of each year
-<<fig=TRUE, pdf=TRUE, eps=FALSE>>=
-par(mfcol = c(2, 2))
-
-boxplot( coredata(DJF), col="lightblue", ylab="Precipitation, [mm]", 
-         main="Winter (DJF) Precipitation")
-boxplot( coredata(MAM), col="lightblue", ylab="Precipitation, [mm]", 
-         main="Spring (MAM) Precipitation")
-boxplot( coredata(JJA), col="lightblue", ylab="Precipitation, [mm]", 
-         main="Summer (JJA) Precipitation")
-boxplot( coredata(SON), col="lightblue", ylab="Precipitation, [mm]", 
-         main="Autumn (SON) Precipitation")
+<<fig=TRUE, pdf=TRUE, eps=FALSE, width=12, height=10>>=
+hydroplot(x, pfreq="seasonal", FUN=sum, stype="default")
 @
 
 
 \end{enumerate}
+
+%##################################
+This tutorial was built under: 
+
+<<echo=FALSE>>=
+sessionInfo()$platform
+sessionInfo()$R.version$version.string 
+paste("hydroTSM", sessionInfo()$otherPkgs$hydroTSM$Version)
+@
+
 
 
 \end{document}
