@@ -2,8 +2,8 @@ Package: hydroTSM
 Type: Package
 Title: Time series management, analysis and interpolation for
         hydrological modelling
-Version: 0.3-0
-Date: 2011-09-01
+Version: 0.3-1
+Date: 2011-09-14
 Author: Mauricio Zambrano-Bigiarini [aut, cre]
 Author@R: c(person("Mauricio", "Zambrano-Bigiarini", email =
         "mauricio.zambrano@ing.unitn.it", role=c("aut", "cre") ) )
@@ -32,6 +32,6 @@ BugReports:
 Keywords: hydrology, hydrological modelling, hydrologic modeling, time
         series
 LazyLoad: yes
-Packaged: 2011-09-01 09:33:42 UTC; zambrhe
+Packaged: 2011-09-14 13:17:46 UTC; zambrhe
 Repository: CRAN
-Date/Publication: 2011-09-01 10:17:39
+Date/Publication: 2011-09-14 15:14:43
