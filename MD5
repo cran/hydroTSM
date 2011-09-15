@@ -1,7 +1,7 @@
-4c9bd65bb23ca0f9e93f2cd16ac09bfe *DESCRIPTION
+5668d829438acf668615bbe3e548803b *DESCRIPTION
 bb44e44664dd5de8f63476beaab30ff5 *LICENSE
 44bd1740163245e067d64c9701ca398a *NAMESPACE
-4dab1cd55e01e380ede93ffb8ae0bf68 *NEWS
+3bf728840710fd9845030e9a3de02148 *NEWS
 e4209c9b37e5fcdd08939e4f132dab22 *R/annualfunction.R
 8dc08fc52994f4fb8c7cb75bbef1e9b6 *R/daily2annual.R
 55e1cedc4a880fdd791355e3f917af5d *R/daily2monthly.R
@@ -31,7 +31,7 @@ ecfc3c0404c2530defd44f6b8c29727e *R/mspplot.R
 ec76495e95625ea68ebc2f12542f4a53 *R/rm1stchar.R
 21a9559d401db8d9f1522b659daf6ba5 *R/seasonalfunction.R
 55afdd2fff0519aefd704994613930a1 *R/sfreq.R
-f84ea67583902b5bbb4abbfdfe529661 *R/smry.R
+3a4b3ae5983e7059e7b0771ab5df7857 *R/smry.R
 bcb8cd58f3e9ec27c4725ca9cebcf62b *R/sname2plot.R
 9947af863b16dd8dea8e5dc5ea37ae72 *R/sname2ts.R
 f0b16ca29605d35cb08b304cda833405 *R/stdx.R
@@ -47,7 +47,7 @@ f7d4467a64731d1e128a51367c73021b *data/EbroPPgis.RData
 851ddf21006dc52fbc31b6d9d5f7222c *data/OcaEnOnaQts.RData
 abcbc70ce85a22f13726a538f85da15d *data/SanMartinoPPts.RData
 0afd32151b381627baddd15f6a044fbf *inst/doc/hydroTSM_Vignette.Rnw
-0ff9f3a226d0d96b644ebf6b9df28be9 *inst/doc/hydroTSM_Vignette.pdf
+f4e52d2cc466489f5e45fb19ac18a0d2 *inst/doc/hydroTSM_Vignette.pdf
 a80a0f6061a0b4c6f36354e77fa42500 *man/EbroCatchmentsCHE.Rd
 9fb77d608bcef988ef03b1431b40ba7a *man/EbroDEM1000m.Rd
 7e01597e87ad98febf34cb07c4857862 *man/EbroPPgis.Rd
@@ -68,7 +68,7 @@ fc8ab3408193f61e3d40ab23c2fd6586 *man/fdc.Rd
 cdf5026a87c90f1d60515bf3e8f1fced *man/fdcu.Rd
 f9f9928ab9bb4ee4ae25a06ca930e8ae *man/gists2spt.Rd
 42878e0d1a2cae7ad1f59b1e42a369ab *man/hydroTSM-internal.Rd
-a7b3474073941b62bb777d7e5ce61690 *man/hydroTSM-package.Rd
+90777b6aca1e7fb606cd8b2dc0a04ed3 *man/hydroTSM-package.Rd
 cad997983499dfa792be86c6a0134d75 *man/hydrokrige.Rd
 a139044fa384ae51fd39aa7efae091e8 *man/hydropairs.Rd
 3a07acc7e7a61e258cdf33426d3aad0d *man/hydroplot.Rd
