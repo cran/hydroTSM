@@ -53,39 +53,66 @@ izoo2rzoo.default <- function(x, from= start(x), to= end(x),
 # Started: XX-XX-2009                                                          #
 # Updates: 23-Aug-2011                                                         #
 #          07-May-2012                                                         #
+#          16-Oct-2012                                                         #
 ################################################################################ 
 
 izoo2rzoo.zoo <- function(x, from= start(x), to= end(x), 
                           date.fmt="%Y-%m-%d", tstep ="days", ... ) {
 
-  if (is.na(match(class(x), c("zoo"))))
-     stop("Invalid argument: 'x' must be of class 'zoo'")
-
   # Requiring the Zoo Library (Zoo's ordered observations)
   require(zoo)
+  
+  if (!is.zoo(x)) stop("Invalid argument: 'x' must be of class 'zoo'")
+      
+  ifelse ( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
+           grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
+           grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE),
+           subdaily.date.fmt <- TRUE, subdaily.date.fmt <- FALSE )
+  
+  if(subdaily.date.fmt) {
+    from <- as.POSIXct(from, format=date.fmt)
+    to   <- as.POSIXct(to, format=date.fmt)
+  } else {
+      from <- as.Date(from, format=date.fmt)
+      to   <- as.Date(to, format=date.fmt)
+    } # ELSE end
+    
+  # If the index of 'x' is character, it is converted into a Date object
+  if ( class(time(x))[1] %in% c("factor", "character") )
+    ifelse(subdaily.date.fmt, time(x) <- as.POSIXct(dates, format=date.fmt),
+                              time(x) <- as.Date(dates, format=date.fmt) )
 
-  # Generating a daily-regular time series of NA's,
-  # just for being merged with the real daily-irregular time series
-  dates <- seq( from=as.Date(from, format=date.fmt),
-            to=as.Date(to, format=date.fmt), by= tstep ) 
-
+  # sampling frequency of 'x'           
+  x.freq <- xts::periodicity(x)$scale
+        
+  # checking that date.fmt and the sampling frequency of 'x' are compatible 
+  if (x.freq %in% c("minute","hourly") ) {
+    if (!subdaily.date.fmt) stop("Invalid argument: 'date.fmt' (", date.fmt, ") is not compatible with a sub-daily time series !!")
+  } else
+       if (subdaily.date.fmt) {
+          time(x) <- as.POSIXct(time(x))
+          warning("'date.fmt' (", date.fmt, ") is sub-daily, while 'x' is a '", x.freq, "' ts => 'time(x)=as.POSIXct(time(x))'")
+       } # IF end
+ 
+  # Creating a regular time series with NA's in all dates in [from, to]
+  dates  <- seq(from=from, to=to, by= tstep)
   na.zoo <- zoo(rep(NA, length(dates)), dates)
 
-  # Selecting only those data that within the time period between 'from' and 'to'
-  x.sel <- x[ time(x) %in% dates, ]
+  # Selecting only those data within the time period between 'from' and 'to'
+  #x.sel <- x[ time(x) %in% dates, ]
+  x.sel <- window(x, start=from, end=to)
 
-  # Creating a daily-regular time series with the read Precipitatoin values and 
-  # NA's in those days without information
+  # Creating a regular time series with NA's in dates in which 'x' has no data
   x.merged <- merge(na.zoo, x.sel)
   
-  # Returning as result only the column containing the Regular Time Series with NA's in the empty days
+  # Removing the fictitious column corresponding to 'na.zoo'
   x.merged <- x.merged[,-1]
   
   # Giving the same column names than the original 'x'
   if ( is.matrix(x) | is.data.frame(x) )
     colnames(x.merged) <- colnames(x)
 
-  # Returning as result only the column containing the Regular Time Series with NA's in the empy days
+  # Returning only the column containing the Regular ts with NA's in the empty records
   return( x.merged )
 
 } # 'izoo2rzoo.zoo' end

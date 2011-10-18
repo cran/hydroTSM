@@ -1,8 +1,17 @@
-#####################################################
-# sname2ts: Station name -> time series             #
-#####################################################
-#                 January 13th, 2009                #
-#####################################################
+# File sname2ts.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2009-2011 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+# sname2ts: Station name -> time series                                        #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 13-Jan-2009                                                         #
+# Updates: 18-Oct-2012                                                         #
+################################################################################
 # This function takes a data.frame whose columns contains the time series
 # (without missing dates) of several gauging stations, it takes the name
 # of one gauging station and extracts a time
@@ -85,11 +94,11 @@ sname2ts <- function(x, sname, dates, date.fmt="%Y-%m-%d", var.type,
         stop("Invalid argument: 'dates' must be of class 'numeric', 'factor', 'Date'")
 
   # If 'dates' is a number, it indicates the index of the column of 'x' that stores the dates
-  if ( class(dates) == "numeric" ) dates <- as.Date(x[, dates], format= date.fmt)
+  if ( class(dates) == "numeric" ) dates <- zoo::as.Date(as.character(x[, dates]), format= date.fmt)
 
   # If 'dates' is a factor, it have to be converted into 'Date' class,
   # using the date format  specified by 'date.fmt'
-  if ( class(dates) == "factor" ) dates <- as.Date(dates, format= date.fmt)
+  if ( class(dates) == "factor" ) dates <- zoo::as.Date(dates, format= date.fmt)
 
   # If 'dates' is already of Date class, the following line verifies that
   # the number of days in 'dates' be equal to the number of element in the
@@ -118,7 +127,7 @@ sname2ts <- function(x, sname, dates, date.fmt="%Y-%m-%d", var.type,
      from     <- dates[1]
      from.pos <- 1
   } else {
-      from <- as.Date(from, format=date.fmt)
+      from <- zoo::as.Date(from, format=date.fmt)
       if ( length( which(dates == from) ) > 0 ) {
         from.pos <- which( dates == from )
        } else stop("Invalid argument: 'from' is not in 'dates' ")
@@ -129,7 +138,7 @@ sname2ts <- function(x, sname, dates, date.fmt="%Y-%m-%d", var.type,
      to.pos <- length(dates)
      to     <- dates[to.pos]     
   } else {
-      to <- as.Date(to, format=date.fmt)
+      to <- zoo::as.Date(to, format=date.fmt)
       if ( length( which(dates == to) ) > 0 ) {
         to.pos <- which( dates == to )
       } else stop("Invalid argument: 'to' is not in 'dates' ")
