@@ -1,8 +1,8 @@
 importFrom("e1071", skewness, kurtosis)
-importFrom("sp", proj4string, coordinates, spplot)
 #importFrom("maptools", readShapePoly)
 importFrom("gstat", krige, idw)
 importFrom("automap", autoKrige)
+importFrom("sp", proj4string, coordinates, spplot)
 exportPattern("^[^\\.]")
 
 S3method(monthlyfunction, zoo)
@@ -14,5 +14,6 @@ S3method(daily2annual, zoo)
 S3method(dwi, zoo)
 S3method(extract, zoo)
 S3method(smry, zoo)
+S3method(fdc, zoo)
 
 

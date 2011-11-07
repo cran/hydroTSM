@@ -1,7 +1,7 @@
-5668d829438acf668615bbe3e548803b *DESCRIPTION
+3e71b66f662e0da1b472eaa8b74cf362 *DESCRIPTION
 bb44e44664dd5de8f63476beaab30ff5 *LICENSE
-44bd1740163245e067d64c9701ca398a *NAMESPACE
-3bf728840710fd9845030e9a3de02148 *NEWS
+31be53a81301ec303323cc8aba4de16b *NAMESPACE
+13f1e0cd5867152d94094d68f5086304 *NEWS
 e4209c9b37e5fcdd08939e4f132dab22 *R/annualfunction.R
 8dc08fc52994f4fb8c7cb75bbef1e9b6 *R/daily2annual.R
 55e1cedc4a880fdd791355e3f917af5d *R/daily2monthly.R
@@ -12,7 +12,7 @@ e47f7084218e0ed4491d9467f434702f *R/diy.R
 659045b4058e895e80710e0bf19b94ee *R/dwdays.R
 b88cff5d21fa738b3d35ee9278242374 *R/dwi.R
 8cdc8dfd46a64b5006bf414ea288858f *R/extract.R
-71f394f9c749bab891b791eac64b9c4c *R/fdc.R
+f87008709c712f86b4d3fcc8c17c4f86 *R/fdc.R
 155c472a49a961f758c84c0445a29732 *R/fdcu.R
 4a2eaa8e2059799c092ab6116c2b9c03 *R/gists2spt.R
 5321b909ade0bbe988f0a559d5071f07 *R/hydrokrige.R
@@ -47,7 +47,7 @@ f7d4467a64731d1e128a51367c73021b *data/EbroPPgis.RData
 851ddf21006dc52fbc31b6d9d5f7222c *data/OcaEnOnaQts.RData
 abcbc70ce85a22f13726a538f85da15d *data/SanMartinoPPts.RData
 0afd32151b381627baddd15f6a044fbf *inst/doc/hydroTSM_Vignette.Rnw
-f4e52d2cc466489f5e45fb19ac18a0d2 *inst/doc/hydroTSM_Vignette.pdf
+abe093804af3fbf0675c8bafa573f650 *inst/doc/hydroTSM_Vignette.pdf
 a80a0f6061a0b4c6f36354e77fa42500 *man/EbroCatchmentsCHE.Rd
 9fb77d608bcef988ef03b1431b40ba7a *man/EbroDEM1000m.Rd
 7e01597e87ad98febf34cb07c4857862 *man/EbroPPgis.Rd
@@ -64,11 +64,11 @@ f8ab7c2622ff4109454eca20bf775bf7 *man/drawxaxis.Rd
 d504aa96c4fc8d70e8c0ffd13a3cdf21 *man/dwdays.Rd
 6fb2d6bb1ba1a4fd1ae43c34464c5554 *man/dwi.Rd
 7752490b8c8fc26a3b90eeda2d2471df *man/extract.Rd
-fc8ab3408193f61e3d40ab23c2fd6586 *man/fdc.Rd
+156ff4a0f26db7051da7d70db9cdc5a9 *man/fdc.Rd
 cdf5026a87c90f1d60515bf3e8f1fced *man/fdcu.Rd
 f9f9928ab9bb4ee4ae25a06ca930e8ae *man/gists2spt.Rd
 42878e0d1a2cae7ad1f59b1e42a369ab *man/hydroTSM-internal.Rd
-90777b6aca1e7fb606cd8b2dc0a04ed3 *man/hydroTSM-package.Rd
+84ea13e21386f39983a41ec11681157e *man/hydroTSM-package.Rd
 cad997983499dfa792be86c6a0134d75 *man/hydrokrige.Rd
 a139044fa384ae51fd39aa7efae091e8 *man/hydropairs.Rd
 3a07acc7e7a61e258cdf33426d3aad0d *man/hydroplot.Rd
