@@ -1,8 +1,17 @@
-########################################################################
-# dwdays:  average amount of dry/wet days per each month               #
-########################################################################
-#	               Date: 24-Jan-2010                               #
-########################################################################
+# File dwdays.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2010-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+# dwdays:  average amount of dry/wet days per each month                       #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 24-Jan-2010                                                         #
+# Updates: 29-May-2013                                                         #
+################################################################################
 # Given a daily time series of precipitation, this function computes the average amount
 # of dry/wet days (pcp > thr or pcp < thr for wet and dry days, respectively) on each month
 
@@ -15,20 +24,17 @@ dwdays <-function(x, ...) UseMethod("dwdays")
 
 dwdays.default <- function(x, thr=0, type="wet", na.rm=TRUE, ... ) {
 
-  # Requiring the Zoo Library (Zoos ordered observations)
-  require(zoo)
-
   # Checking the user provide a valid value for 'x'
   if (is.na(match(class(x), c("zoo"))))
-        stop("Invalid argument: 'x' must be of class 'zoo'")
+    stop("Invalid argument: 'x' must be of class 'zoo'")
 
   # Checking the user provide a valid value for 'x'
   if (is.na(match(sfreq(x), c("daily")))) {
-		 stop(paste("Invalid argument: 'x' is not a daily ts, it is a ", sfreq(x), " ts", sep="") ) }
+    stop(paste("Invalid argument: 'x' is not a daily ts, it is a ", sfreq(x), " ts", sep="") ) }
 
   # Checking the user provide a valid value for 'type'
   if ( is.na(match(type, c("dry", "wet"))) )
-        stop("Invalid argument: 'type' must be in c('dry', 'wet'")
+    stop("Invalid argument: 'type' must be in c('dry', 'wet'")
 
   # getting the dates of 'x'
   dates <- time(x)
@@ -62,6 +68,12 @@ dwdays.default <- function(x, thr=0, type="wet", na.rm=TRUE, ... ) {
 
 
 
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 24-Jan-2010                                                         #
+# Updates: 29-May-2013                                                         #
+################################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the
 #             dates for correponding to the 'sname' station
 #             If 'dates' is a number, it indicates the index of the column in
@@ -75,7 +87,7 @@ dwdays.default <- function(x, thr=0, type="wet", na.rm=TRUE, ... ) {
 #             ONLY required when class(dates)=="factor" or "numeric"
 # 'verbose' : logical; if TRUE, progress messages are printed
 dwdays.data.frame <- function(x, thr=0, type="wet", na.rm=TRUE,
-                              dates,
+                              dates=1,
                               date.fmt="%Y-%m-%d",
 							  verbose=TRUE,...) {
 
@@ -119,12 +131,7 @@ dwdays.data.frame <- function(x, thr=0, type="wet", na.rm=TRUE,
   # Amount of Years belonging to the desired period
   nyears <- Ending.Year - Starting.Year + 1
 
-
-  # Requiring the Zoo Library (Zoos ordered observations)
-  require(zoo)
-
   if (verbose) message("[Starting the computations...]")
-
 
   # Creating the data.frame that will store the computed averages for each station
   z <- as.data.frame(matrix(data = NA, ncol = 12, nrow = nstations,
@@ -159,8 +166,14 @@ dwdays.data.frame <- function(x, thr=0, type="wet", na.rm=TRUE,
  } #'dwdays.data.frame' END
 
 
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 24-Jan-2010                                                         #
+# Updates: 29-May-2013                                                         #
+################################################################################
 dwdays.matrix  <- function(x, thr=0, type="wet", na.rm=TRUE,
-                           dates,
+                           dates=1,
                            date.fmt="%Y-%m-%d",
 			   verbose=TRUE,...) {
 

@@ -1,7 +1,7 @@
 # File izoo2rzoo.R
 # Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2009-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################ 
@@ -39,9 +39,6 @@ izoo2rzoo.default <- function(x, from= start(x), to= end(x),
   if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
      stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
 
-  # Requiring the Zoo Library (Z’s ordered observations)
-  require(zoo)
-
   izoo2rzoo.zoo(x=x, from=from, to=to, date.fmt=date.fmt, tstep=tstep, ...)
 
 } # 'izoo2rzoo.default' END
@@ -54,14 +51,12 @@ izoo2rzoo.default <- function(x, from= start(x), to= end(x),
 # Updates: 23-Aug-2011                                                         #
 #          07-May-2012                                                         #
 #          16-Oct-2012                                                         #
+#          29-May-2013                                                         #
 ################################################################################ 
 
 izoo2rzoo.zoo <- function(x, from= start(x), to= end(x), 
                           date.fmt="%Y-%m-%d", tstep ="days", ... ) {
 
-  # Requiring the Zoo Library (Zoo's ordered observations)
-  require(zoo)
-  
   if (!is.zoo(x)) stop("Invalid argument: 'x' must be of class 'zoo'")
       
   ifelse ( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
@@ -83,7 +78,7 @@ izoo2rzoo.zoo <- function(x, from= start(x), to= end(x),
                               time(x) <- as.Date(dates, format=date.fmt) )
 
   # sampling frequency of 'x'           
-  x.freq <- xts::periodicity(x)$scale
+  x.freq <- sfreq(x)
         
   # checking that date.fmt and the sampling frequency of 'x' are compatible 
   if (x.freq %in% c("minute","hourly") ) {

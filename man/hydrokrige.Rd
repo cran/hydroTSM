@@ -1,3 +1,9 @@
+%% File hydrokrige.Rd
+%% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+%%                                 http://cran.r-project.org/web/packages/hydroTSM/
+%% Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+%% Distributed under GPL 2 or later
+
 \name{hydrokrige}
 \Rdversion{1.1}
 \alias{hydrokrige}
@@ -41,7 +47,7 @@ hydrokrige(x.ts, x.gis, ...)
         arrow.plot = FALSE, arrow.offset, arrow.scale, 
         scalebar.plot = FALSE, sb.offset, sb.scale, 
         verbose = TRUE, allNA.action="error",
-        dates, from, to, write2disk = TRUE, 
+        dates=1, from, to, write2disk = TRUE, 
         out.fmt= "csv2",
         fname = paste(ColorRamp, "by_Subcatch.csv", sep = ""), ...)
 }
@@ -195,7 +201,7 @@ Action to be executed when all the values in \code{x.ts} are NA. Valid values ar
 }
   \item{dates}{
 numeric, factor, or character object indicating how to obtain the ID (usually dates) that will be used to identify the interpolation carried out for each row of \code{x.ts}. \cr
-If \code{dates} is a single number, it indicates the index of the column in \code{x.ts} that stores the dates \cr
+If \code{dates} is a single number (default), it indicates the index of the column in \code{x.ts} that stores the dates \cr
 If \code{dates} is a factor or character vector, its values will be used as ID for the interpolations carried out in each row of \code{x.ts}.
 }
   \item{from}{
@@ -253,7 +259,7 @@ The automatic kriging is carried out by using a variogram generated automaticall
 }
 
 \author{
-Mauricio Zambrano-Bigiarini, \email{mauricio.zambrano@ing.unitn.it}
+Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail}
 }
 \note{
 IMPORTANT: It is you responsibility to check the validity of the fitted variogram !!.

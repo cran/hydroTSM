@@ -1,18 +1,18 @@
 # File daily2monthly.R
 # Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2008-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
-#####################################
-#          daily2monthly            #
-#####################################
-# This function transform a DAILY regular (without missing days,
-#  but possible with days without information) time series into a MONTHLY one
+################################################################################
+#          daily2monthly                                                       #
+################################################################################
+# This function transform a (sub)DAILY regular time series into a MONTHLY one
 
-# 'x'   : daily values that will be converted into annual ones.
-#         class(x) must be 'zoo'
-# 'FUN' : Function that have to be applied for transforming from daily to monthly time step
+# 'x'   : daily values that will be converted into monthly ones.
+#         class(x) must be zoo/xts
+# 'FUN' : Function that have to be applied for transforming from daily into 
+#         monthly time step
 #         For precipitation FUN MUST be "sum"
 #         For temperature and flow time series, FUN MUST be "mean"
 # 'na.rm': Logical. Should missing values be removed?
@@ -21,57 +21,58 @@
 
 daily2monthly <-function(x, ...) UseMethod("daily2monthly")
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: XX-XXX-2008                 #
-# Updates: 09-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: XX-XXX-2008                                                         #
+# Updates: 09-Aug-2011                                                         #
+#          08-Apr-013                                                          #
+################################################################################
 daily2monthly.default <- function(x, FUN, na.rm=TRUE, ... ) {
 
-     # Checking that the user provied a valid class for 'x'   
-     valid.class <- c("xts", "zoo")    
-     if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
-        stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
-
-     # Requiring the Zoo Library (Z’s ordered observations)
-     require(zoo)
+     # Checking that 'x' is a zoo object
+     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
 
      daily2monthly.zoo(x=x, FUN=FUN, na.rm=na.rm,...)
 
 } # 'daily2monthly.default' end
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: 09-Aug-2011                 #
-# Updates: 09-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 09-Aug-2011                                                         #
+# Updates: 09-Aug-2011                                                         #
+#          08-Apr-2013                                                         #
+################################################################################
 daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
 
   # Checking the user provide a valid value for 'FUN'
   if (missing(FUN))
-     stop("Missing argument value: 'FUN' must contain a valid function for aggregating the daily values")
+     stop("Missing argument value: 'FUN' must contain a valid function for aggregating the values")
 
-  # Checking the user provide a valid value for the sampling frequency of 'x'
-  if (sfreq(x) != "daily")
-      stop(paste("Invalid argument: 'x' is not a daily ts, it is a ", sfreq(x), " ts", sep="") )
+  # Checking the user provide a valid value for 'x'
+  if (sfreq(x) %in% c("monthly", "quarterly", "annual"))
+    stop("Invalid argument: 'x' is not a (sub)daily/weekly ts. 'x' is a ", sfreq(x), " ts" )
       
   # Monthly index for 'x'
   dates  <- time(x)
-  months <- zoo::as.Date( as.yearmon( time(x) ) )
+  months <- as.Date( as.yearmon( time(x) ) ) # zoo::as.Date ; zoo::as.yearmon
 
-  # Generating a Monthly time series of Total Monthly Precipitation (Monthly sum of daily values)
-  tmp <-aggregate( x, by=months, FUN, na.rm= na.rm )
+  # Generating a Monthly time series 
+  tmp <- aggregate( x, by=months, FUN, na.rm= na.rm ) 
   
   # Replacing the NaNs by 'NA.
   # mean(NA:NA, na.rm=TRUE) == NaN
   nan.index <- which(is.nan(tmp))
-  if ( length(nan.index) > 0 ) { tmp[nan.index] <- NA }
+  if ( length(nan.index) > 0 )  tmp[nan.index] <- NA 
   
   # Replacing all the Inf and -Inf by NA's
   # min(NA:NA, na.rm=TRUE) == Inf  ; max(NA:NA, na.rm=TRUE) == -Inf
   inf.index <- which(is.infinite(tmp))
   if ( length(inf.index) > 0 ) tmp[inf.index] <- NA 
+
+  if (NCOL(tmp) == 1) tmp <- zoo(as.numeric(tmp), time(tmp))
 
   return(tmp)
 
@@ -79,12 +80,14 @@ daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
 
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: XX-XXX-2008                 #
-# Updates: 09-Aug-2011                 #
-#          04-Jun-2012                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: XX-XXX-2008                                                         #
+# Updates: 09-Aug-2011                                                         #
+#          04-Jun-2012                                                         #
+#          29-May-2013                                                         #
+################################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the
 #             dates for correponding to the 'sname' station
 #             If 'dates' is a number, it indicates the index of the column in
@@ -107,7 +110,7 @@ daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
 # 'out.fmt' : character, for selecting if the result will be 'numeric' or 'zoo'. Valid values are: c('numeric', 'zoo')
 # 'verbose'      : logical; if TRUE, progress messages are printed
 daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
-                                     dates, date.fmt="%Y-%m-%d",
+                                     dates=1, date.fmt="%Y-%m-%d",
 				     out.type="data.frame",
 				     out.fmt="numeric",
 				     verbose=TRUE,...) {
@@ -118,7 +121,7 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
 
   # Checking that the user provide a valid value for 'FUN'
   if (missing(FUN))
-      stop("Missing argument value: 'FUN' must contain a valid function for aggregating the daily values")
+      stop("Missing argument value: 'FUN' must contain a valid function for aggregating the values !")
 
   # Checking that the user provied a valid argument for 'out.fmt'
   if (is.na(match( out.fmt, c("numeric", "zoo") ) ) )
@@ -136,13 +139,13 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
   # The column with dates is then substracted form 'x' for easening the further computations
   if ( class(dates) == "numeric" ) {
     tmp   <- dates
-    dates <- zoo::as.Date(x[, dates], format= date.fmt)
+    dates <- as.Date(x[, dates], format= date.fmt) # zoo::as.Date
     x     <- x[-tmp]
   }  # IF end
 
   # If 'dates' is a factor, it have to be converted into 'Date' class,
   # using the date format  specified by 'date.fmt'
-  if ( class(dates) == "factor" ) dates <- zoo::as.Date(dates, format= date.fmt)
+  if ( class(dates) == "factor" ) dates <- as.Date(dates, format= date.fmt) # zoo::as.Date
 
   # If 'dates' is already of Date class, the following line verifies that
   # the number of days in 'dates' be equal to the number of element in the
@@ -219,8 +222,8 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
         row.fin <-  j*nmonths
 
         z[row.ini:row.fin, 1] <- snames[j] # it is automatically repeated 'nmonths' times
-        z[row.ini:row.fin, 2] <- format(zoo::as.Date(dates), "%Y")
-        z[row.ini:row.fin, 3] <- format(zoo::as.Date(dates), "%b")
+        z[row.ini:row.fin, 2] <- format(as.Date(dates), "%Y") # zoo::as.Date
+        z[row.ini:row.fin, 3] <- format(as.Date(dates), "%b") # zoo::as.Date
         z[row.ini:row.fin, 4] <- m
 
         } # FOR end
@@ -232,13 +235,15 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
  } #'daily2monthly.data.frame' END
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: XX-XXX-2008                 #
-# Updates: 09-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: XX-XXX-2008                                                         #
+# Updates: 09-Aug-2011                                                         #
+#          29-May-2013                                                         #
+################################################################################
 daily2monthly.matrix  <- function(x, FUN, na.rm=TRUE,
-                                  dates, date.fmt="%Y-%m-%d",
+                                  dates=1, date.fmt="%Y-%m-%d",
 				  out.type="data.frame",
 				  out.fmt="numeric",
                                   verbose=TRUE,...) {

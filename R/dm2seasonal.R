@@ -1,10 +1,18 @@
-#########################################################################
-# dm2seasonal: Generic function for computing seasonal values for every #
-#              year of a daily/monthly zoo object                       #
-#########################################################################
-# Started: 15-May-2009 ;                                                #
-# Updates: 31-Aug-2009 ; 19-Jun-2011 ; 08-Aug-2011                      #
-#########################################################################
+# File dm2seasonal.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+# dm2seasonal: Generic function for computing seasonal values for every        #
+#              year of a daily/monthly zoo object                              #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 15-May-2009 ;                                                       #
+# Updates: 31-Aug-2009 ; 19-Jun-2011 ; 08-Aug-2011                             #
+################################################################################
 
 # 'x   '    : variable of type 'zoo' or 'data.frame'
 # 'season'  : character, indicating the weather season to be used for selecting the data
@@ -26,13 +34,8 @@ dm2seasonal <-function(x, ...) UseMethod("dm2seasonal")
 
 dm2seasonal.default <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
 
-  # Checking that the user provied a valid class for 'x'   
-  valid.class <- c("xts", "zoo")    
-  if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
-      stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
- 
-  # Requiring the Zoo Library (Z’s ordered observations)
-  require(zoo)
+  # Checking that 'x' is a zoo object
+  if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
 
   dm2seasonal.zoo(x=x, season=season, FUN=FUN, na.rm=na.rm, out.fmt=out.fmt, ...)
 
@@ -41,11 +44,12 @@ dm2seasonal.default <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
 
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: 08-Aug-2011                 #
-# Updates: 08-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 08-Aug-2011                                                         #
+# Updates: 08-Aug-2011                                                         #
+################################################################################
 dm2seasonal.zoo <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
 
   # Checking that the user provied a valid argument for 'season'
@@ -60,7 +64,7 @@ dm2seasonal.zoo <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
       valid.seasons <- valid.seasons <- union(seasons.default, seasons.FrenchPolynesia)
              
       if (length(which(!is.na(match(season, valid.seasons )))) <= 0)  
-         stop( paste("Invalid argument: 'season' must be in 'c(", paste(valid.seasons, collapse=", "), ")'",sep="") ) 
+         stop("Invalid argument: 'season' must be in 'c(", paste(valid.seasons, collapse=", "), ")'") 
             
       # Finding out if 'season' belongs to 'seasons.default' or to ' seasons.FrenchPolynesia'.
       if ( season %in% seasons.default ) {
@@ -74,9 +78,9 @@ dm2seasonal.zoo <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
   # Checking that the user provied a valid argument for 'FUN'
   if (missing(FUN)) stop("Missing argument: 'FUN' must be provided")
 
-  # Checking that 'x' is a Daily or Monthly ts
-  if (is.na(match(sfreq(x), c("daily", "monthly") ) ) )
-      stop(paste("Invalid argument: 'x' must be a daily or monthly ts, but 'sfreq(x)' is", sfreq(x), sep=" ")  )
+  # Checking the user provide a valid value for 'x'
+  if (sfreq(x) %in% c("quarterly", "annual"))
+    stop("Invalid argument: 'x' is not a sub-daily, daily, weekly or monthly ts. 'x' is a ", sfreq(x), " ts" )
       
   # Checking 'out.fmt'
   if ( is.na(match(out.fmt, c("%Y", "%Y-%m-%d") ) ) )
@@ -125,11 +129,13 @@ dm2seasonal.zoo <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
 
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: 15-May-2009                 #
-# Updates: 08-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 15-May-2009                                                         #
+# Updates: 08-Aug-2011                                                         #
+#          29-May-2013                                                         #
+################################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the
 #             dates for correponding to the 'sname' station
 #             If 'dates' is a number, it indicates the index of the column in
@@ -150,7 +156,7 @@ dm2seasonal.zoo <- function(x, season, FUN, na.rm=TRUE, out.fmt="%Y", ...) {
 #                              The third column will store the season
 #                              The fouth column will contain the seasonal value, corresponding to the year specified in the second column
 dm2seasonal.data.frame <- function(x, season, FUN, na.rm=TRUE,
-                                   dates, date.fmt="%Y-%m-%d",
+                                   dates=1, date.fmt="%Y-%m-%d",
 				   out.type="data.frame", 
 				   out.fmt="%Y", ... ) {
 
@@ -170,7 +176,7 @@ dm2seasonal.data.frame <- function(x, season, FUN, na.rm=TRUE,
       valid.seasons <- valid.seasons <- union(seasons.default, seasons.FrenchPolynesia)
              
       if (length(which(!is.na(match(season, valid.seasons )))) <= 0)  
-         stop( paste("Invalid argument: 'season' must be in 'c(", paste(valid.seasons, collapse=", "), ")'",sep="") ) 
+         stop("Invalid argument: 'season' must be in 'c(", paste(valid.seasons, collapse=", "), ")'" ) 
             
       # Finding out if 'season' belongs to 'seasons.default' or to ' seasons.FrenchPolynesia'.
       if ( season %in% seasons.default ) {
@@ -237,7 +243,7 @@ dm2seasonal.data.frame <- function(x, season, FUN, na.rm=TRUE,
         # Amount of Years belonging to the desired season
         nyears <- Ending.Year - Starting.Year + 1
 
-        message("[Starting the computations...]")
+        message("[Starting computations...]")
 
         # Creating a vector with the names of the field that will be used for storing the results
         field.names <- c("StationID", "Year", "Season", "Value" )
@@ -251,11 +257,11 @@ dm2seasonal.data.frame <- function(x, season, FUN, na.rm=TRUE,
 
         for (j in 1:nstations) {
 
-            message( paste("[ Station: ", format(snames[j], width=10, justify="left"),
-                         " : ",format(j, width=3, justify="left"), "/",
-                         nstations, " => ",
-                         format(round(100*j/nstations,2), width=6, justify="left"),
-                         "% ]", sep="") )
+            message("[ Station: ", format(snames[j], width=10, justify="left"),
+                    " : ",format(j, width=3, justify="left"), "/",
+                    nstations, " => ",
+                    format(round(100*j/nstations,2), width=6, justify="left"),
+                    "% ]" )
 
             # Transforming the column of 'x' into a zoo object,
 	    # using the dates provided by the user
@@ -282,9 +288,16 @@ dm2seasonal.data.frame <- function(x, season, FUN, na.rm=TRUE,
 
  } #'dm2seasonal.data.frame' END
  
- 
+
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 2009                                                                #
+# Updates: 2011                                                                #
+#          29-May-2013                                                         #
+################################################################################
 dm2seasonal.matrix  <- function(x, season, FUN, na.rm=TRUE,
-                                dates, date.fmt="%Y-%m-%d",
+                                dates=1, date.fmt="%Y-%m-%d",
 				out.type="data.frame", 
 				out.fmt="%Y", ... ) {
 

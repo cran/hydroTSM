@@ -1,7 +1,7 @@
 # File vector2zoo.R
 # Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2008-2011 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -14,7 +14,8 @@
 # Updates   : 01-Oct-2009                                                      #
 #             06-Oct-2010                                                      #
 #             05-May-2011                                                      #
-#             15-Oct-2012 ; 16-Oct-2012                                        #                    
+#             15-Oct-2012 ; 16-Oct-2012                                        #     
+#             29-May-2013                                                      #               
 ################################################################################
 #  Transform a numeric vector and its corresponding dates into a 'zoo' object
 
@@ -22,9 +23,6 @@
 # 'dates'   : vector with a complete series of dates, in the same order of 'ts'
 # 'date.fmt': format in which the dates are stored in 'dates'
 vector2zoo <- function(x, dates, date.fmt="%Y-%m-%d") {
-
-  # Requiring the Zoo Library
-  require(zoo)
 
   if (is.na(match(class(dates)[1], c("Date", "POSIXct", "POSIXlt", "character", "factor"))))
       stop("Invalid argument: 'class(dates)' must be in c('Date', 'POSIXct', 'POSIXlt', 'character', 'factor')")

@@ -1,12 +1,25 @@
-####################################################
-# Generic Moving (sliding) Average function         #
-#####################################################
+# File ma.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2010-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+#                               'ma'                                           #
+################################################################################
+# Generic Moving (sliding) Average function                                    #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 2008
+# Updates: 
+################################################################################
 ma <-function(x, ...) UseMethod("ma")
 
 
-#####################################################
-# Default Moving (sliding) Average function         #
-#####################################################
+################################################################################
+# Default Moving (sliding) Average function                                    #
+################################################################################
 # A vector with the moving average computed using a window of 'win.len' elements
 
 # x      : time series with n elements
@@ -26,10 +39,15 @@ ma.default <- function (x, win.len, FUN=mean,...) {
 } # 'ma.default' end
 
 
-####################################################################
-# 	ma.zoo:	Moving Average of a DAILY regular time series,         #
-#           by default using a window width =365 (Annual Average)  #
-####################################################################
+################################################################################
+# 	ma.zoo:	Moving Average of a DAILY regular time series,                 #
+#           by default using a window width =365 (Annual Average)              #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 2008                                                                #
+# Updates: 29-May-2013                                                         #
+################################################################################
 
 # 'x'       : zoo variable
 # 'win.len' : window width. It have to be odd
@@ -42,10 +60,7 @@ ma.zoo <- function(x, win.len, FUN=mean,... ) {
   if (ceiling(win.len)/2 != win.len/2)
       stop("Invalid argument: 'win.len' must be of odd")
 
-  # Requiring the zoo library
-  require(zoo)
-
   # Generating an Moving Average time series, with a window width win.len1
-  return ( rollapply(x, width=win.len, FUN, by.colum=FALSE) )
+  return ( rollapply(x, width=win.len, FUN, by.colum=FALSE) ) # zoo::rollapply
 
 } # 'ma.zoo' end

@@ -1,7 +1,7 @@
 # File hydroplot.R
 # Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2008-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -244,8 +244,10 @@
 # BoxPlot of Daily, Monthly and Annual Time Serires                            #
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         # 
+################################################################################
 # Started: 2008                                                                #
 # Updates: 17-Apr-2011                                                         #
+#          29-May-2013                                                         #
 ################################################################################
 # 'x'		 : daily time series of type 'zoo'
 # 'x.monthly : monthly time series of type 'zoo'
@@ -287,9 +289,6 @@
   if (is.na(match(pfreq, c("dma", "ma", "dm"))))
       stop("Invalid argument: 'pfreq' must be in c('dma', 'ma', 'dm')")
 
- # Requiring the Zoo Library (Z’s ordered observations)
- require(zoo)
-
  # Checking if the Daily Boxplot have to be plotted
  if ( pfreq %in% c("dma", "dm") ) {
    # Generating a factor based on the year in which each daily date falls
@@ -330,8 +329,10 @@
 # Histogram of Daily, Monthly and Annual Time Serires                          #
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         # 
+################################################################################
 # Started: 2008                                                                #
 # Updates: 17-Apr-2011                                                         #
+#          29-May-2013                                                         #
 ################################################################################
 # 'x'		 : daily time series of type 'zoo'
 # 'x.monthly : monthly time series of type 'zoo'
@@ -368,9 +369,6 @@
       # Checking that the user provied a valid argument for 'pfreq'
       if (is.na(match(pfreq, c("dma", "ma", "dm"))))
           stop("Invalid argument: 'pfreq' must be in c('dma', 'ma', 'dm')")
-
-     # Requiring the Zoo Library (Z’s ordered observations)
-     require(zoo)
 
      # Checking if the Daily ts have to be plotted
      if ( pfreq %in% c("dma", "dm") ) {
@@ -413,10 +411,12 @@
 		               tick.tstep= "auto", lab.tstep= "auto", lab.fmt=NULL,
                                var.unit="units", main=NULL, xlab="Time", ylab=NULL, 
                                cex.main=1.3, cex.lab=1.3, cex.axis=1.3, col="blue", 
-                               lwd=1, lty=1, stype="default", h=NULL, ...) {
+                               lwd=1, lty=1, stype="default", 
+                               season.names=c("Winter", "Spring", "Summer", "Autumn"),
+                               h=NULL, ...) {
       
       # checking the class of 'x'      
-      if (is.na(match(class(x), c("zoo", "xts"))))
+      if (!is.zoo(x))
          stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
           
       # Valid tseps for ''tick.tstep' and 'lab.tstep' 
@@ -438,8 +438,9 @@
       if (length(which(!is.na(match(stype, valid.types )))) <= 0)  
         stop("Invalid argument: 'stype' must be in c('default', 'FrenchPolynesia')")
 
-      # Requiring the Zoo Library (Zoo's ordered observations)
-      require(xts)
+      # Checking that the user provied a valid argument for 'season.names'
+      if ( length(season.names) != 4 )
+         stop("Invalid argument: 'season.names' must have 4 elements !")
 
       # Checking the length of x
       if ( sfreq(x) == "daily" ) {
@@ -447,8 +448,9 @@
           stop("Invalid argument: daily time series need -at least- 365 values !")
       } else if ( sfreq(x) == "monthly" ) {
           if (length(x) < 12 )
-            stop("Invalid argument: monthly time series need -at least- 1 12 values !")
-        } else  stop("Invalid argument: seasonal plots can not be drawn for annual time series !")    
+            stop("Invalid argument: monthly time series need -at least- 12 values !")
+        } else if ( sfreq(x) == "annual" ) 
+                 stop("Invalid argument: seasonal plots can not be drawn for annual time series !")    
       
       # Labels for the seasons
       if (stype=="default") { 
@@ -458,7 +460,7 @@
         } # ELSE end 
        
       # Computing the seasonal values
-      winter <- dm2seasonal(x, season=as.character(seasons.lab[1]), FUN=FUN, out.fmt="%Y-%m-%d")
+      winter <- dm2seasonal(x, season=seasons.lab[1], FUN=FUN, out.fmt="%Y-%m-%d")
       spring <- dm2seasonal(x, season=seasons.lab[2], FUN=FUN, out.fmt="%Y-%m-%d")
       summer <- dm2seasonal(x, season=seasons.lab[3], FUN=FUN, out.fmt="%Y-%m-%d")
       autumm <- dm2seasonal(x, season=seasons.lab[4], FUN=FUN, out.fmt="%Y-%m-%d")
@@ -481,7 +483,7 @@
         if (length(h)==1) h <- rep(h,4)
         
         # winter
-        plot.xts(winter, axes=FALSE, type="o", main=paste("Winter (", seasons.lab[1], ")", sep=""), xlab=xlab, ylab=ylab, 
+        plot.xts(winter, axes=FALSE, type="o", main=paste(season.names[1], " (", seasons.lab[1], ")", sep=""), xlab=xlab, ylab=ylab, 
                  cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis, col=col, 
                  lty=lty, lwd=lwd, ...)
         axis(2, cex.lab=1.3, cex.axis=1.3)
@@ -490,7 +492,7 @@
         abline(h=h[1], col="red", lty=2)
                 
         # spring
-        plot.xts(spring, axes=FALSE, type="o", main=paste("Spring (", seasons.lab[2], ")", sep=""), xlab=xlab, ylab=ylab, 
+        plot.xts(spring, axes=FALSE, type="o", main=paste(season.names[2], " (", seasons.lab[2], ")", sep=""), xlab=xlab, ylab=ylab, 
                  cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis, col=col, 
                  lty=lty, lwd=lwd, ...)
         axis(2, cex.lab=1.3, cex.axis=1.3)
@@ -499,7 +501,7 @@
         abline(h=h[2], col="red", lty=2)
                 
         # summer
-        plot.xts(summer, axes=FALSE, type="o", main=paste("Summer (", seasons.lab[3], ")", sep=""), xlab=xlab, ylab=ylab, 
+        plot.xts(summer, axes=FALSE, type="o", main=paste(season.names[3], " (", seasons.lab[3], ")", sep=""), xlab=xlab, ylab=ylab, 
                  cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis, col=col, 
                  lty=lty, lwd=lwd, ...)
         axis(2, cex.lab=1.3, cex.axis=1.3)
@@ -508,7 +510,7 @@
         abline(h=h[3], col="red", lty=2)
       
         # autumm
-        plot.xts(autumm, axes=FALSE, type="o", main=paste("Autumn (", seasons.lab[4], ")", sep=""), xlab=xlab, ylab=ylab, 
+        plot.xts(autumm, axes=FALSE, type="o", main=paste(season.names[4], " (", seasons.lab[4], ")", sep=""), xlab=xlab, ylab=ylab, 
                  cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis, col=col, 
                  lty=lty, lwd=lwd, ...)
         axis(2, cex.lab=1.3, cex.axis=1.3)
@@ -520,33 +522,35 @@
       # Plotting seasonal boxplots    #
       #################################
         boxplot(coredata(winter), col= "lightblue", ylab = ylab, 
-                main = paste("Winter (", seasons.lab[1], ")", sep=""),
+                main = paste(season.names[1], " (", seasons.lab[1], ")", sep=""),
                 pars=list(cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis))
         abline(h=h[1], col="red", lty=2) 
         boxplot(coredata(spring), col= "lightblue", ylab = ylab, 
-                main = paste("Spring (", seasons.lab[2], ")", sep=""),
+                main = paste(season.names[2], " (", seasons.lab[2], ")", sep=""),
                 pars=list(cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis))
         abline(h=h[2], col="red", lty=2) 
         boxplot(coredata(summer), col= "lightblue", ylab = ylab, 
-                main = paste("Summer (", seasons.lab[3], ")", sep=""),
+                main = paste(season.names[3], " (", seasons.lab[3], ")", sep=""),
                 pars=list(cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis))
         abline(h=h[3], col="red", lty=2) 
         boxplot(coredata(autumm), col= "lightblue", ylab = ylab, 
-                main = paste("Autumn (", seasons.lab[4], ")", sep=""),
+                main = paste(season.names[4], " (", seasons.lab[4], ")", sep=""),
                 pars=list(cex.main=cex.main, cex.lab=cex.lab, cex.axis=cex.axis))   
         abline(h=h[4], col="red", lty=2)  
                                 
 } # .hydroplotseasonal END
 
 
-#########################################################################
-# hydroplot: Daily, Monthly and Annual plots of hydrological time series#
-#########################################################################
-# Author : Mauricio Zambrano-Bigiarini                                  # 
-# Started: 2008                                                         #
-# Updates: 19-Apr-2011 ; 19-Jun-2011  ; 10-Aug-2011                     #
-#          04-Jun-2012
-#########################################################################
+################################################################################
+# hydroplot: Daily, Monthly and Annual plots of hydrological time series       #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         # 
+################################################################################
+# Started: 2008                                                                #
+# Updates: 19-Apr-2011 ; 19-Jun-2011  ; 10-Aug-2011                            #
+#          04-Jun-2012                                                         #
+#          04-Apr-2013 ; 29-May-2013                                           #
+################################################################################
 # 9 plots:
 # 1: Line plot with Daily time series, with 2 moving averages, specified by 'win.len1' and 'win.len2'
 # 2: Line plot with Monthly time series, with 2 moving averages, specified by 'win.len1' and 'win.len2'
@@ -577,12 +581,12 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
                       to,
                       date.fmt= "%Y-%m-%d",
                       stype="default",
+                      season.names=c("Winter", "Spring", "Summer", "Autumn"),
                       h=NULL,                      
                       ...) {
 
      # Checking that the user provied a valid class for 'x'   
-     valid.class <- c("xts", "zoo")    
-     if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
+     if (!is.zoo(x)) 
         stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
             
      # 'xname' value
@@ -636,11 +640,6 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
                       } #ELSE end
      } # IF end
      
-     # Checking that the user provied a valid value for 'stype'   
-     valid.types <- c("default", "FrenchPolynesia")    
-     if (length(which(!is.na(match(stype, valid.types )))) <= 0)  
-        stop("Invalid argument: 'stype' must be in c('default', 'FrenchPolynesia')")
-     
      ##########################################   
      ## In case 'from' and 'to' are provided  ##
      dates <- time(x)
@@ -650,7 +649,7 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
         from     <- dates[1]
         from.pos <- 1
      } else {
-         from <- zoo::as.Date(from, format=date.fmt)
+         from <- as.Date(from, format=date.fmt)
          if ( length( which(dates == from) ) > 0 ) {
            from.pos <- which( dates == from )
           } else stop("Invalid argument: 'from' is not in 'dates' ")
@@ -661,7 +660,7 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
         to.pos <- length(dates)
         to     <- dates[to.pos]     
      } else {
-         to <- zoo::as.Date(to, format=date.fmt)
+         to <- as.Date(to, format=date.fmt) # zoo::as.Date
          if ( length( which(dates == to) ) > 0 ) {
            to.pos <- which( dates == to )
          } else stop("Invalid argument: 'to' is not in 'dates' ")
@@ -680,11 +679,17 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
      def.par <- par(no.readonly = TRUE) # save default, for resetting...
      on.exit(par(def.par))
 
-     # Requiring the Zoo Library
-     require(zoo)
-     
      # IF the user wants SEASONAL plots
      if (pfreq == "seasonal") {
+       
+       # Checking that the user provied a valid value for 'stype'   
+       valid.types <- c("default", "FrenchPolynesia")    
+       if (length(which(!is.na(match(stype, valid.types )))) <= 0)  
+         stop("Invalid argument: 'stype' must be in c('default', 'FrenchPolynesia')")
+
+       # Checking that the user provied a valid argument for 'season.names'
+       if ( length(season.names) != 4 )
+         stop("Invalid argument: 'season.names' must have 4 elements !")
        
        if (!missing(ptype)) {
          if ( ptype != "ts+boxplot") {
@@ -710,7 +715,8 @@ hydroplot <- function(x, FUN, na.rm=TRUE,
        .hydroplotseasonal(x=x, FUN=FUN, na.rm=na.rm, tick.tstep= tick.tstep, 
                           lab.tstep= lab.tstep, lab.fmt=lab.fmt, var.unit=var.unit, 
                           main=main, xlab=xlab, ylab=ylab, cex.main=cex.main, 
-                          cex.lab=cex.lab, cex.axis=cex.axis, col=col, stype=stype, h=h, ...)
+                          cex.lab=cex.lab, cex.axis=cex.axis, col=col, 
+                          stype=stype, season.names=season.names, h=h, ...)
                                
      } else {
      

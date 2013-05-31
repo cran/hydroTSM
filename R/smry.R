@@ -1,21 +1,30 @@
-####################################################################
-# Smry: Min, 1stQ, Mean, Median, 3rdQ, Max, IQR, sd, cv, skewness, #
-#       kurtosis, amount of elements and amount of NA's            #
-#       For numerical variables.                                   #
-#       Skewness and Kurtosis are computed with the e1071 package  #
-####################################################################
-# Author: Mauricio Zambrano-Bigiarini                              #
-####################################################################
-# Started: 14-Jun-2008;                                            #
-# Updates: 11-Sep-2009 ; 30-Aug-2011  ; 14-Sep-2011 ; 15-Sep-2011  #
-####################################################################
+# File smry.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+#                                 'smry'                                       # 
+################################################################################
+# Min, 1stQ, Mean, Median, 3rdQ, Max, IQR, sd, cv, skewness, kurtosis, amount  #
+# of elements and amount of NA's                                               #
+#       For numerical variables.                                               #
+#       Skewness and Kurtosis are computed with the e1071 package              #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 14-Jun-2008;                                                        #
+# Updates: 11-Sep-2009 ; 30-Aug-2011  ; 14-Sep-2011 ; 15-Sep-2011              #
+#          29-May-2013                                                         #
+################################################################################
 smry <-function(x, ...) UseMethod("smry")
 
 
 smry.default <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), ...)  {
 
     if ( class(x) %in% c("zoo", "xts") ) {
-        x <- zoo::coredata(x)
+        x <- coredata(x) # zoo::coredata
     } # IF end
 
     xname <- deparse(substitute(x))
@@ -101,12 +110,12 @@ smry.Date <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), ...
 } # 'smry.Date' end
 
 
-####################################################################
-# Author: Mauricio Zambrano-Bigiarini                              #
-####################################################################
-# Started: 14-Jun-2008;                                            #
-# Updates: 11-Sep-2009 ; 30-Aug-2011  ; 14-Sep-2011                #
-####################################################################
+################################################################################
+# Author: Mauricio Zambrano-Bigiarini                                          #
+################################################################################
+# Started: 14-Jun-2008;                                                        #
+# Updates: 11-Sep-2009 ; 30-Aug-2011  ; 14-Sep-2011                            #
+################################################################################
 smry.data.frame <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), ...)  {
 
     # Creating a copy of the original observed values
@@ -130,12 +139,12 @@ smry.data.frame <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3
 
 
 
-####################################################################
-# Author: Mauricio Zambrano-Bigiarini                              #
-####################################################################
-# Started: 14-Jun-2008;                                            #
-# Updates: 11-Sep-2009                                             #
-####################################################################
+################################################################################
+# Author: Mauricio Zambrano-Bigiarini                                          #
+################################################################################
+# Started: 14-Jun-2008;                                                        #
+# Updates: 11-Sep-2009                                                         #
+################################################################################
 smry.matrix <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), ...)  {
 
     x <- as.data.frame(x)
@@ -145,16 +154,16 @@ smry.matrix <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), .
 } # 'smry.data.frame' end
 
 
-####################################################################
-# Author: Mauricio Zambrano-Bigiarini                              #
-####################################################################
-# Started: 30-Aug-2011                                             #
-# Updates:                                                         #
-####################################################################
+################################################################################
+# Author: Mauricio Zambrano-Bigiarini                                          #
+################################################################################
+# Started: 30-Aug-2011                                                         #
+# Updates: 29-May-2013                                                         #
+################################################################################
 smry.zoo <- function(x, na.rm=TRUE, digits = max(3, getOption("digits")-3), ...)  {
 
     dates <- time(x)  
-    z     <- zoo::coredata(x)
+    z     <- coredata(x) # zoo::coredata
     
     # Giving meaningful names to the output
     if ( (is.matrix(x)) | (is.data.frame(x)) ) {

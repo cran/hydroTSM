@@ -1,7 +1,7 @@
 # File sfreq.R
 # Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2009-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -17,6 +17,7 @@
 #          Nov 2010                                                            #
 #          Apr 2011 ; 09-Aug-2011                                              #
 #          18-Oct-2012                                                         #
+#          29-May-2013                                                         #
 ################################################################################
 sfreq <- function(x, min.year=1800) {
 
@@ -25,7 +26,7 @@ sfreq <- function(x, min.year=1800) {
   if (length(which(!is.na(match(class(x), valid.class )))) <= 0) 
      stop("Invalid argument: 'x' must be in c('xts', 'zoo')" )
      
-   out <- xts::periodicity(x)$scale
+   out <- periodicity(x)$scale # xts::periodicity
    
    if (out == "yearly") out <- "annual"
 

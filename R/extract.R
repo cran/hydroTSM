@@ -1,3 +1,9 @@
+# File extract.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
 #########################################################################
 # extract: Extracts from a zoo object, all the values belonging to a    #
 #             given month, year or weather season                       #
@@ -30,11 +36,13 @@ extractzoo <-function(x, ...) UseMethod("extract")
 #              -) "SON": September, October, November
 
 
-#########################################################################
-# Author : Mauricio Zambrano-Bigiarini                                  #
-# Started: 16-Apr-2009                                                  #
-# Updates: 15-May-2009; 30-Ago-2009 ; 10-Aug-2011                       #
-#########################################################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 16-Apr-2009                                                         #
+# Updates: 15-May-2009; 30-Ago-2009 ; 10-Aug-2011                              #
+#          29-May-2013                                                         #
+################################################################################
 extract.default <- function(x, trgt, ...) {
 
   # Checking that the user provied a valid class for 'x'   
@@ -42,19 +50,17 @@ extract.default <- function(x, trgt, ...) {
      if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
         stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
 
-     # Requiring the Zoo Library (Z’s ordered observations)
-     require(zoo)
-
      extract.zoo(x=x, trgt=trgt, ...)
 
 } # 'extract.default' END
 
 
-#########################################################################
-# Author : Mauricio Zambrano-Bigiarini                                  #
-# Started: 22-Aug-2011                                                  #
-# Updates:                                                              #
-#########################################################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 22-Aug-2011                                                         #
+# Updates:                                                                     #
+################################################################################
 extract.zoo <- function(x, trgt, ...) {
 
   # Checking that the user provied a valid argument for 'trgt'

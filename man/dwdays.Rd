@@ -1,3 +1,9 @@
+%% File dwdays.Rd
+%% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+%%                                 http://cran.r-project.org/web/packages/hydroTSM/
+%% Copyright 2010-2013 Mauricio Zambrano-Bigiarini
+%% Distributed under GPL 2 or later
+
 \name{dwdays}
 \Rdversion{1.1}
 \alias{dwdays.data.frame}
@@ -18,10 +24,10 @@ dwdays(x, ...)
 \method{dwdays}{default}(x, thr=0, type="wet", na.rm=TRUE, ... )
 
 \method{dwdays}{data.frame}(x, thr=0, type="wet", na.rm=TRUE, 
-        dates, date.fmt="\%Y-\%m-\%d", verbose=TRUE,...)
+        dates=1, date.fmt="\%Y-\%m-\%d", verbose=TRUE,...)
 
 \method{dwdays}{matrix}(x, thr=0, type="wet", na.rm=TRUE, 
-        dates, date.fmt="\%Y-\%m-\%d", verbose=TRUE,...)
+        dates=1, date.fmt="\%Y-\%m-\%d", verbose=TRUE,...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -41,7 +47,7 @@ Logical. Should missing values be removed before counting?
 }
   \item{dates}{
 numeric, factor or Date object indicating how to obtain the dates \cr
-If \code{dates} is a number, it indicates the index of the column in \code{x} that stores the dates \cr
+If \code{dates} is a number (default), it indicates the index of the column in \code{x} that stores the dates \cr
 If \code{dates} is a factor, it is converted into Date class, using the date format  specified by \code{date.fmt}  \cr
 If \code{dates} is already of Date class, the code verifies that the number of days in \code{dates} be equal to the number of element in \code{x}
 }
@@ -70,7 +76,7 @@ further arguments passed to or from other methods.
 %% ~put references to the literature/web site here ~
 %%}
 \author{
-Mauricio Zambrano-Bigiarini, \email{mauricio.zambrano@ing.unitn.it}
+Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail}
 }
 %%\note{
 %%  ~~further notes~~

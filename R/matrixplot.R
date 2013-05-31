@@ -1,3 +1,9 @@
+# File matrixplot.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
 ####################################################################
 # matrixplot: Plots a color matrix representing the amount of days #
 #          with information in a set of gauging stations           #
@@ -23,7 +29,7 @@
 matrixplot <- function(x, ColorRamp="Days", ncolors=70, main="", ...) {
      
   # If 'x' is a zoo, it trys to coherce into a matrix
-  if (class(x) == "zoo") x <- zoo::coredata(x)
+  if (class(x) == "zoo") x <- coredata(x) # zoo::coredata
   
   # Checking that the user provied a valid class for 'x'   
   valid.class <- c("matrix", "data.frame")    

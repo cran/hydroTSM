@@ -1,35 +1,41 @@
 %%File daily2monthly.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroTSM/
-%% Copyright 2008-2012 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2013 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
-\name{daily2monthly}
+\name{(sub)daily2monthly}
 \Rdversion{1.1}
 \alias{daily2monthly}
 \alias{daily2monthly.default}
 \alias{daily2monthly.zoo}
 \alias{daily2monthly.data.frame}
 \alias{daily2monthly.matrix}
+\alias{subdaily2monthly}
+\alias{subdaily2monthly.default}
+\alias{subdaily2monthly.zoo}
+\alias{subdaily2monthly.data.frame}
+\alias{subdaily2monthly.matrix}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Daily -> Monthly
+(sub)Daily -> Monthly
 }
 \description{
-Generic function for transforming a DAILY regular time series into a MONTHLY one
+Generic function for transforming a DAILY (sub-daily or weekly) regular time series into a MONTHLY one
 }
 \usage{
 daily2monthly(x, ...)
+subdaily2monthly(x, ...)
 
 \method{daily2monthly}{default}(x, FUN, na.rm = TRUE, ...)
 
 \method{daily2monthly}{zoo}(x, FUN, na.rm = TRUE, ...)
 
-\method{daily2monthly}{data.frame}(x, FUN, na.rm = TRUE, dates, date.fmt = "\%Y-\%m-\%d", 
+\method{daily2monthly}{data.frame}(x, FUN, na.rm = TRUE, dates=1, date.fmt = "\%Y-\%m-\%d", 
         out.type = "data.frame", out.fmt="numeric", verbose = TRUE, ...)
 
-\method{daily2monthly}{matrix}(x, FUN, na.rm = TRUE, dates, date.fmt = "\%Y-\%m-\%d", 
+\method{daily2monthly}{matrix}(x, FUN, na.rm = TRUE, dates=1, date.fmt = "\%Y-\%m-\%d", 
         out.type = "data.frame", out.fmt="numeric", verbose = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,7 +54,7 @@ Logical. Should missing values be removed? \cr
 }
   \item{dates}{
 numeric, factor or Date object indicating how to obtain the dates for each gauging station \cr
-If \code{dates} is a number, it indicates the index of the column in \var{x} that stores the dates \cr
+If \code{dates} is a number (default), it indicates the index of the column in \var{x} that stores the dates \cr
 If \code{dates} is a factor, it is converted into Date class, using the date format specified by \code{date.fmt}  \cr
 If \code{dates} is already of Date class, the code verifies that the number of days on it be equal to the number of elements in \code{x}
 }
@@ -90,7 +96,7 @@ further arguments passed to or from other methods.
 %% ~put references to the literature/web site here ~
 %%}
 \author{
-Mauricio Zambrano-Bigiarini, \email{mauricio.zambrano@ing.unitn.it}
+Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail}
 }
 %%\note{
 %%  ~~further notes~~
@@ -99,15 +105,24 @@ Mauricio Zambrano-Bigiarini, \email{mauricio.zambrano@ing.unitn.it}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{daily2annual}}, \code{\link{monthlyfunction}}, \code{\link{hydroplot}}, \code{\link{vector2zoo}}, \code{\link{izoo2rzoo}}, \code{\link{as.Date}}
+\code{\link{daily2annual}}, \code{\link{subdaily2daily}}, \code{\link{monthlyfunction}}, \code{\link{hydroplot}}, \code{\link{vector2zoo}}, \code{\link{izoo2rzoo}}, \code{\link{as.Date}}
 }
 \examples{
-## Loading the SanMartino precipitation data
+######################
+## Ex1: Loading the DAILY precipitation data at SanMartino
 data(SanMartinoPPts)
 x <- SanMartinoPPts
 
-## Daily to Monthly
+## Daily to monthly
 m <- daily2monthly(x, FUN=sum, na.rm=TRUE)
+
+######################
+## Ex2: Loading the time series of HOURLY streamflows for the station Karamea at Gorge
+data(KarameaAtGorgeQts)
+x <- KarameaAtGorgeQts
+
+# Sub-daily to monthly ts
+subdaily2monthly(x, FUN=mean, na.rm=TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

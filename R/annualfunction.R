@@ -1,9 +1,18 @@
-###########################################################################
-# annualfunction: Generic function for computing monthly totals/mean values  #
-#               for a zoo object or data.frame                             #
-############################################################################
-#                  May 15th, 2009; Sep 01st 2009                           #
-############################################################################
+# File annualfunction.R
+# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
+#                                 http://cran.r-project.org/web/packages/hydroTSM/
+# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+# annualfunction: Generic function for computing monthly totals/mean values    #
+#                 for a zoo object or data.frame                               #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+#  May 15th, 2009; Sep 01st 2009 ;                                             # 
+#  06-Apr-2013                                                                 #
+################################################################################
 # 'x   '  :  daily, monthly or annual 'zoo' or 'data.frame' object
 # 'FUN'   :  Function that will be applied to ALL the values in 'x' belonging to each weather season of the year
 #             (e.g., Fun can be some of c('mean', 'max', 'min', 'sd'))
@@ -14,24 +23,21 @@ annualfunction <- function(x, FUN, na.rm=TRUE,...) UseMethod("annualfunction")
 
 annualfunction.default <- function(x, FUN, na.rm=TRUE,...) {
 
-     # Checking that the user provied a valid class for 'x'   
-     valid.class <- c("xts", "zoo")    
-     if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
-         stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
-
-     # Requiring the Zoo Library
-     require(zoo)
+     # Checking that 'x' is a zoo object
+    if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
 
      annualfunction.zoo(x=x, FUN=FUN, na.rm=na.rm, ...)
 
 } # 'annualfunction.default' end
 
 
-########################################
-# Author : Mauricio Zambrano-Bigiarini #
-# Started: 09-Aug-2011                 #
-# Updates: 09-Aug-2011                 #
-########################################
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Started: 09-Aug-2011                                                         #
+# Updates: 09-Aug-2011                                                         #
+#          03-Abr-2013                                                         #
+################################################################################
 annualfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
 
      # If the user did not provide a title for the plots, this is created automatically
@@ -47,7 +53,8 @@ annualfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
      
      #  'FUN' is applied to all the previously computed annual values to get the final result.
      if ( (is.matrix(x)) | (is.data.frame(x)) ) {
-       totals <- apply(totals, MARGIN=2, FUN=FUN, an.rm=na.rm)
+       #totals <- apply(totals, MARGIN=2, FUN=FUN, an.rm=na.rm) # up to version 0.3-6
+       totals <- apply(totals, MARGIN=2, FUN=FUN, na.rm=na.rm) # since version 0.3-7
      } else totals <- aggregate(totals, by = rep("value", length(totals)), FUN = FUN, na.rm = na.rm)
      
      # Replacing the NaNs by 'NA.
@@ -62,7 +69,7 @@ annualfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
 
      # Giving meaningful names to the output
      if ( (is.matrix(x)) | (is.data.frame(x)) ) {
-       totals <- t(totals) # For having the months' names as column names
+       totals <- t(totals) # For having the years as column names
      } # IF end
 
      return(totals)
@@ -76,6 +83,7 @@ annualfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
 ############################################################################
 # Started: 2009-May-15                                                     #
 # Updates: 2009-Sep-01st ; 2011-Aug-09                                     #
+#          29-May-2013                                                     #
 ############################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the 
 #             dates correponding to the 'sname' station
@@ -98,7 +106,7 @@ annualfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
 #                                value corresponding to that year and that station.
 # 'verbose' : logical; if TRUE, progress messages are printed 
 annualfunction.data.frame <- function(x, FUN, na.rm=TRUE,
-                                      dates, date.fmt="%Y-%m-%d",
+                                      dates=1, date.fmt="%Y-%m-%d",
                                       verbose=TRUE,...) {
 	  
   # Checking that the user provied a valid argument for 'FUN'
@@ -138,8 +146,7 @@ annualfunction.data.frame <- function(x, FUN, na.rm=TRUE,
   if ( ( class(dates) == "Date") & (length(dates) != nrow(x) ) )
      stop("Invalid argument: 'length(dates)' must be equal to 'nrow(x)'")
 
-  x       <- as.zoo(x)
-  time(x) <- dates
+  x <- zoo(x, dates)
   
   ##############################################################################
   annualfunction.zoo(x=x, FUN=FUN, na.rm=na.rm, ...)
@@ -154,9 +161,10 @@ annualfunction.data.frame <- function(x, FUN, na.rm=TRUE,
 ############################################################################
 # Started: 2009-May-15                                                     #
 # Updates: 2009-Sep-01st ; 2011-Aug-09                                     #
+#          29-May-2013                                                     #
 ############################################################################
 annualfunction.matrix <- function(x, FUN, na.rm=TRUE,
-                                  dates, date.fmt="%Y-%m-%d",
+                                  dates=1, date.fmt="%Y-%m-%d",
                                   verbose=TRUE,...) {
  
  x <- as.data.frame(x)
