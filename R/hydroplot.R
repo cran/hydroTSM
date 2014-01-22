@@ -10,6 +10,7 @@
 # Author : Mauricio Zambrano-Bigiarini                                         # 
 # Started: 2008                                                                #
 # Updates: 17-Apr-2011 ; 10-Aug-2011                                           #
+#          15-Jan-2014                                                         #
 ################################################################################
 # It requires the function'drawTimeAxis' that is stored in the 'lib_Plot.R' library
 # 'x'		 : daily time series of type 'zoo'
@@ -75,7 +76,7 @@
               'months', 'weeks', 'days', 'hours', 'minutes', 'seconds')")
 
       # Requiring the Zoo Library (Zoo's ordered observations)
-      require(xts)
+      #require(xts)
 
       # Booleans indicating if the moving averages for the dayly and monthly
       # time series can be computed and ploted. By default they  are FALSE,

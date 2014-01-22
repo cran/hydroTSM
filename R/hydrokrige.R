@@ -11,7 +11,8 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 ################################################################################
 # April 22-25th, 2009; September 2009, December 2009, April 2010               #
-# 04-Jul-2012 ; 05-Jul-2012 ; 09-Jul-2012                                      #   
+#          04-Jul-2012 ; 05-Jul-2012 ; 09-Jul-2012                             #   
+#          15-Jan-2014                                                         #
 ################################################################################
 # This function makes an IDW interpolation over a catchment defined by a
 # polygonal shapefile, and plots its map. It works only for 1 single time
@@ -305,7 +306,7 @@ hydrokrige.default <- function(x.ts, x.gis,
        if (verbose) message("[reading GIS Subcatchments in: '", basename(subcatchments), "'...]")
 
        # Reading the Shapefile with the subcatchments
-       SubCatchments.shp <- maptools:::readShapePoly(subcatchments, proj4string=p4s, IDvar= IDvar)
+       SubCatchments.shp <- maptools::readShapePoly(subcatchments, proj4string=p4s, IDvar= IDvar)
 
        # Number of Subcatchmnets
        nSub <- nrow(SubCatchments.shp@data)
@@ -961,7 +962,7 @@ hydrokrige.default <- function(x.ts, x.gis,
 ################################################################################
 # Started: April 22-28th,                                                      #
 # Updates: Oct 2009, Dec 2010, Apr 2010                                        #
-#          29-May-2013                                                         #
+#          29-May-2013 ; 03-Jun-2013                                           #
 ################################################################################
 # BLOCK IDW interpolation (with optional plot) over a set of subcatchments,    #
 # defined by a polygonal shapefile, and during a Time Window defined by the    #
@@ -1184,29 +1185,15 @@ hydrokrige.data.frame <- function( x.ts, x.gis,
   } #IF end
 
   # Checking that the user provied a valid argument for 'dates'
-  if (missing(dates)) {
-      stop("Missing argument: 'dates' must be provided")
-  } else
-    {
-         # If 'dates' is a single number, it indicates the index of the column of 'x' that stores the dates
-         if ( (class(dates) == "numeric") & (length(dates)==1 ) ) {
-
-             dates.col  <- dates
-	     dates      <- x.ts[, dates.col]
-
-         }  else { # When class('dates') is not numeric
-
-               # Adding, as first column, the dates given by the user
-               x.ts      <- cbind(Date=dates, x.ts)
-               dates.col <- 1
-
-	    } # ELSE end
-
-
-    #    } # ELSE end
-
-    } # ELSE end
-
+  # If 'dates' is a single number, it indicates the index of the column of 'x' that stores the dates
+  if ( (class(dates) == "numeric") & (length(dates)==1 ) ) {
+     dates.col  <- dates
+     dates      <- x.ts[, dates.col]
+  }  else { # When class('dates') is not numeric
+       # Adding, as first column, the dates given by the user
+       x.ts      <- cbind(Date=dates, x.ts)
+       dates.col <- 1
+     } # ELSE end
 
   # Checking the validity of the 'from' argument
   if (missing(from)) { 

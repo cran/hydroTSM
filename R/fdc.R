@@ -10,8 +10,9 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: June 04, 2009                                                       #
 # Updates: 25-Feb-2011 ; 04-Nov-2011                                           #
-#          02-May-2012                                                         #
-#          16-Oct-2012                                                         #
+#          02-May-2012; 16-Oct-2012                                            #
+#          05-Aug-2013                                                         #
+#          15-Jan-2014                                                         # 
 ################################################################################
 
 # Plot the flow Duration Curve in the original time units of 'x' and
@@ -58,10 +59,6 @@ fdc.default <- function (x,
        return(Q.index)
      } # end
 
-     # Detecting zero values
-     x.zero.index <- which(x==0)
-     nzeros <- length(x.zero.index)
-
      # If 'x' is of class 'ts' or 'zoo'
      #if ( !is.na( match( class(x), c("ts", "zoo") ) ) )
      x <- as.numeric(x)
@@ -72,6 +69,10 @@ fdc.default <- function (x,
      # 1) Sort 'x' in drecreasing order. This is just for avoiding misleading
      #lines when using 'type="o"' for plotting
      x <- sort(x)
+
+     # Detecting zero values
+     x.zero.index <- which(x==0)
+     nzeros <- length(x.zero.index)
 
      # Index with the position of the original values
      ind <- match(x.old, x)
@@ -95,10 +96,13 @@ fdc.default <- function (x,
      # dc <- 1 - Fn(x) + 1/n
 
      if (plot) {
+
+          dc.plot <- dc
   
           if (log == "y") {
             if (nzeros > 0) {
-              x <- x[-x.zero.index]
+              x       <- x[-x.zero.index]
+              dc.plot <- dc.plot[-x.zero.index]
               if (verbose) message("[Note: all 'x' equal to zero (", nzeros, ") will not be plotted ]")
             } # IF end
           } # IF end
@@ -113,9 +117,9 @@ fdc.default <- function (x,
           
           # If a new plot has to be created
           if (new) {
-               plot(dc, x,  xaxt = "n", yaxt = "n", type="o", pch=pch, col=col, lty=lty,
+               plot(dc.plot, x,  xaxt = "n", yaxt = "n", type="o", col=col, pch=pch, lwd=lwd, lty=lty,
                     cex=cex, cex.axis= cex.axis, cex.lab=cex.lab, main=main, xlab=xlab, ylab=ylab, ylim=ylim, log=log, ...)
-          } else lines(dc, x,  xaxt = "n", type="o", pch=pch, col=col, lty=lty, cex=cex)
+          } else lines(dc.plot, x,  xaxt = "n", type="o", col=col, pch=pch, lwd=lwd, lty=lty, cex=cex)
 
           # Y axis: Drawing the ticks and labels
           ylabels <- pretty(ylim)
@@ -142,12 +146,12 @@ fdc.default <- function (x,
 
           # Drawing a legend. bty="n" => no border
           if ( !is.null(leg.txt) )
-           legend(x=leg.pos, legend=leg.txt, cex=leg.cex, col=col, lty=lty, pch=pch, bty="n") # cex=cex*1.5,
+           legend(x=leg.pos, legend=leg.txt, cex=leg.cex, col=col, pch=pch, lwd=lwd, lty=lty, bty="n") # cex=cex*1.5,
 
           if (thr.shw) {
               # Finding the flow values corresponding to the 'lQ.thr' and 'hQ.thr' pbb of excedence
-              x.lQ <- x[Qposition(dc, lQ.thr)]
-              x.hQ <- x[Qposition(dc, hQ.thr)]
+              x.lQ <- x[Qposition(dc.plot, lQ.thr)]
+              x.hQ <- x[Qposition(dc.plot, hQ.thr)]
 
               legend("bottomleft", c(paste("Qhigh.thr=", round(x.hQ, 2), sep=""),
                                      paste("Qlow.thr=", round(x.lQ, 2), sep="") ),
@@ -171,6 +175,7 @@ fdc.default <- function (x,
 # Started: 04-Jun-2009                                                         #
 # Updates: 16-Sep-2011 ; 03-Nov-2011                                           #
 #          02-May-2012                                                         #
+#          05-Aug-2013                                                         #
 ################################################################################
 
 fdc.matrix <- function (x,
@@ -228,7 +233,7 @@ fdc.matrix <- function (x,
                           "% ]" )
 
     # Computing and plotting the Flow Duration Curve for the first column
-    fdc(x=x[,1], plot=plot, log=log, pch=pch[1], col=col[1], lty=lty[1],
+    fdc(x=x[,1], plot=plot, log=log, col=col[1], pch=pch[1], lwd=lwd[1], lty=lty[1],
         cex=cex, cex.axis=cex.axis, cex.lab=cex.lab, main=main, 
         xlab= xlab, ylab=ylab, ylim=ylim, yat=yat, 
         verbose=verbose, thr.shw=FALSE, new=TRUE, ...)
@@ -245,7 +250,7 @@ fdc.matrix <- function (x,
          # Computing and plotting the Flow duration Curve for the other columns
          tmp <- sort(x[,j])
               yval <- fdc(x=tmp, plot=FALSE, log="", verbose=verbose)
-              points(yval, tmp, cex=cex, pch=pch[j], col=col[j], lty=lty[j], type="o")
+              points(yval, tmp, cex=cex, col=col[j], pch=pch[j], lwd=lwd[j], lty=lty[j], type="o")
             
           } )
 
@@ -255,7 +260,7 @@ fdc.matrix <- function (x,
         leg.txt <- colnames(x)
       } else leg.txt <- paste("Q", 1:ncol(x), sep="")  
     }
-    legend(x=leg.pos, legend=leg.txt, cex=leg.cex, col=col, lty=lty, pch=pch, bty="n") # cex=cex*2.2,
+    legend(x=leg.pos, legend=leg.txt, cex=leg.cex, col=col, pch=pch, lwd=lwd, lty=lty, bty="n") # cex=cex*2.2,
   
   } # IF end
 
@@ -272,6 +277,7 @@ fdc.matrix <- function (x,
 # Started: 04-Jun-2009                                                         #
 # Updates: 03-Nov-2011                                                         #
 #          02-May-2012                                                         #
+#          05-Aug-2013                                                         #
 ################################################################################
 fdc.data.frame <- function(x,
                            lQ.thr=0.7,
@@ -316,6 +322,7 @@ fdc.data.frame <- function(x,
               xat=xat,
               col=col,
               pch=pch,
+              lwd=lwd,
               lty=lty,
               cex=cex,
               cex.axis=cex.axis,
@@ -338,6 +345,7 @@ fdc.data.frame <- function(x,
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 03-Nov-2011                                                         #
 # Updates: 02-May-2012                                                         #
+#          05-Aug-2013                                                         #
 ################################################################################
 fdc.zoo <- function (x,
                      lQ.thr=0.7,
@@ -380,6 +388,7 @@ fdc.zoo <- function (x,
                xat=xat,
                col=col,
                pch=pch,
+               lwd=lwd,
                lty=lty,
                cex=cex,
                cex.axis=cex.axis,
@@ -404,6 +413,7 @@ fdc.zoo <- function (x,
                      xat=xat,
                      col=col,
                      pch=pch,
+                     lwd=lwd,
                      lty=lty,
                      cex=cex,
                      cex.axis=cex.axis,

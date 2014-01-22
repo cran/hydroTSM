@@ -1,5 +1,38 @@
 NEWS/ChangeLog for hydroTSM
 --------------------------
+0.4-2-1	22-Jan-2014 (after CRAN comments)
+        o 'Author' field was removed from DESCRIPTION file
+        o 'WhatsNew.txt' file was renamed 'ChangeLog'
+        o 'dwi'    : part of the 'Examples' section was marked as 'dontrun', because it execution took more than 5 seconds.
+        o 'mspplot': part of the 'Examples' section was marked as 'dontrun', because it execution took more than 5 seconds.
+
+0.4-2	21-Jan-2014
+        o 'fdc'                        : -) 'lwd' argument is now used (thanks to Bernard Bisselink !)
+                                         -) fixed error raised when some element(s) in x were equal to zero, 'plot=TRUE' and 'log=y' or 'log=xy'
+                                            (thanks to David Young !). The error was: 
+                                            Error in xy.coords(x, y, xlabel, ylabel, log) : 'x' and 'y' lengths differ
+        o 'sname2plot'                 : 'dates' argument is not required any more
+        o 'sname2ts'                   : 'dates' argument is not required any more
+        o 'monthlyfunction.matrix'     : 'dates' argument is not required any more
+        o 'monthlyfunction.data.frame' : 'dates' argument is not required any more
+        o 'annualfunction.matrix'      : 'dates' argument is not required any more
+        o 'annualfunction.data.frame'  : 'dates' argument is not required any more
+        o 'seasonalfunction.matrix'    : 'dates' argument is not required any more
+        o 'seasonalfunction.data.frame': 'dates' argument is not required any more
+        o 'daily2annual.matrix'        : 'dates' argument is not required any more
+        o 'daily2annual.data.frame'    : 'dates' argument is not required any more
+        o 'daily2monthly.matrix'       : 'dates' argument is not required any more
+        o 'daily2monthly.data.frame'   : 'dates' argument is not required any more
+        o 'dm2seasonal.matrix'         : 'dates' argument is not required any more
+        o 'dm2seasonal.data.frame'     : 'dates' argument is not required any more
+        o 'hydrokrige.data.frame'      : 'dates' argument is not required any more
+        o 'dwi.data.frame'             : 'dates' argument is not required any more
+        o 'maptools:::readShapePoly' was replaced by 'maptools::readShapePoly' in all the package (functions 'hydrokrige' and 'mspplot')
+        o 'require(xts)' was removed from 'hydroplot'
+        o 'zoo' package removed from 'Imports' and 'Enhances' (due to changes in CRAN policies)
+        o 'xts' package removed from 'Imports' (due to changes in CRAN policies)
+        o improved vignette
+
 0.4-1	31-May-2013
         o DESCRIPTION : 'xts' package was added to the 'Imports' section
         o 'fdc'       :  truncation of some lines in the PDF manual are fixed now.
@@ -58,7 +91,7 @@ NEWS/ChangeLog for hydroTSM
 
 
 ###################################################
-# Previous Releases (see old file 'WhatsNew.txt)' #
+# Previous Releases (see old file 'ChangeLog)' #
 ###################################################
 
 0.3-6	18-Oct-2012
