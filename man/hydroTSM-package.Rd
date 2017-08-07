@@ -1,7 +1,7 @@
 %% File hydroTSM-package.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroTSM/
-%% Copyright 2009-2014 Mauricio Zambrano-Bigiarini
+%% Copyright 2009-2017 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{hydroTSM-package}
@@ -20,12 +20,12 @@ The focus of this package has been put in providing a collection of tools useful
 \tabular{ll}{
 Package: \tab hydroTSM\cr
 Type: \tab Package\cr
-Version: \tab 0.4-2-1\cr
-Date: \tab 2014-01-22\cr
+Version: \tab 0.5-1\cr
+Date: \tab 2017-08-07\cr
 License: \tab GPL >= 2 \cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Wed Jan 22 19:09:48 CLST 2014; MZB \cr
-BuiltUnder: \tab R version 3.0.2 (2013-09-25) -- "Frisbee Sailing" ; x86_64-pc-linux-gnu (64-bit) \cr
+Packaged: \tab Mon Aug  7 16:23:05 CLT 2017; MZB \cr
+BuiltUnder: \tab R version 3.4.1 (2017-06-30) -- "Single Candle" ; x86_64-pc-linux-gnu (64-bit) \cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
@@ -40,9 +40,8 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail>
 
 \keyword{ package }
 \seealso{
-\url{http://www.rforge.net/hydroGOF/}. \cr
-\url{http://www.rforge.net/hydroPSO/}. \cr
-\url{http://rwiki.sciviews.org/doku.php?id=guides:tutorials:hydrological_data_analysis}
+\url{https://github.com/hzambran/hydroGOF}. \cr
+\url{https://github.com/hzambran/hydroPSO}. \cr
 }
 \examples{
 ## Loading the monthly time series (10 years) of precipitation for the Ebro River basin.
@@ -60,7 +59,7 @@ sname2ts(EbroPPtsMonthly, sname="P9001", dates=1, var.type="Precipitation",
 
 #######
 ## Ex3) Monthly and annual plots
-sname2plot(EbroPPtsMonthly, sname="P9001", var.type="Precipitation", dates=1, pfreq="ma")
+sname2plot(EbroPPtsMonthly, sname="P9001", var.type="Precipitation", pfreq="ma")
 
 #######
 ## Ex4) IDW interpolation and plot

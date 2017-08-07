@@ -1,7 +1,7 @@
 %% File fdc.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroTSM/
-%% Copyright 2008-2014 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2015 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{fdc}
@@ -56,10 +56,10 @@ numeric, zoo, data.frame or matrix object with the observed streamflows for whic
 Measurements at several gauging stations can be stored in a data.frame of matrix object, and in that case, each column of \code{x} represent the time series measured in each gauging station, and the column names of \code{x} have to correspond to the ID of each station (starting by a letter). When \code{x} is a matrix or data.frame, the flow duration curve is computed for each column.
 }
 \item{lQ.thr}{
-numeric, low-flow separation threshold. If this value is different from NA, a vertical line is drawn in this value, and all the values to the left of it are deemed low flows.
+numeric, low-flow separation threshold. If this value is different from NA, a vertical line is drawn in this value, and all the values to the right of it should be deemed as low flows. Default value is 0.7.
 }
 \item{hQ.thr}{
-numeric, high-flow separation threshold. If this value is different from NA, a vertical line is drawn in this value, and all the values to the right of it are deemed high flows
+numeric, high-flow separation threshold. If this value is different from NA, a vertical line is drawn in this value, and all the values to the left of it should br deemed as high flows. Default value is 0.2.
 }
   \item{plot}{
 logical. Indicates if the flow duration curve should be plotted or not. Default value is TRUE.
@@ -164,18 +164,34 @@ data(OcaEnOnaQts)
 fdc(OcaEnOnaQts)
 
 ###################
-# Comparing 2 FDCs:
+# Getting the streamflow values corresponding to 5 and 95\% of time equalled or 
+# exceeded (and also the first streamflow value in 'x' just for verification)
+x  <- OcaEnOnaQts
 
-x <- OcaEnOnaQts
+# First streamflow value (x1=42.1 m3/s)
+x1 <- x[1]
 
-# Random 2nd ts
-y <- x + rnorm(length(x), mean=10)
+# Daily FDC for 'x'
+y <- fdc(x)
 
-# data.frame with the 2 time series
-xx <- data.frame(x=x, y=y)
+# value of the FDC for x1 (y1=0.002739726)
+y1 <- y[1]
 
-# FDC plot
-fdc(xx, thr.shw=FALSE)
+# Performing cubic (or Hermite) spline interpolation of 'x' and 'y'
+f <- splinefun(y,x)
+
+# Getting the (known) streamflow value for 'y1'
+f(y1) # 42.1 m3/s, equal to the known 'x1'
+
+# Streamflow values corresponding to 5 and 95\% of time equalled or exceeded
+f(c(.05, .95))
+
+###################
+## Getting 
+data(OcaEnOnaQts)
+
+## Daily Flow Duration Curve
+fdc(OcaEnOnaQts)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

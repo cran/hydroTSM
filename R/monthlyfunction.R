@@ -1,7 +1,7 @@
 # File monthlyfunction.R
-# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
-#                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+# Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
+#                                 https://CRAN.R-project.org/package=hydroTSM
+# Copyright 2008-2017 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -26,7 +26,7 @@ monthlyfunction.default <- function(x, FUN, na.rm=TRUE,...) {
     # Checking that 'x' is a zoo object
     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
 
-    monthlyfunction.zoo(x=x, FUN=FUN, na.rm=na.rm,...)
+    monthlyfunction.zoo(x=x, FUN=FUN, na.rm=na.rm, ...)
 
 } # 'monthlyfunction.default' end
 
@@ -38,6 +38,7 @@ monthlyfunction.default <- function(x, FUN, na.rm=TRUE,...) {
 # Updates: 08-Aug-2011                                                         #
 #          05-Jun-2012                                                         #
 #          08-Apr-2013                                                         #
+#          28-Nov-2015                                                         #
 ################################################################################
 monthlyfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
 
@@ -54,7 +55,7 @@ monthlyfunction.zoo <- function(x, FUN, na.rm=TRUE,...) {
      months <- factor( month.abb[m], levels=unique(month.abb[m]) )
      
      # 'as.numeric' is necessary for being able to change the names to the output
-     totals <- aggregate(x, by= months, FUN=FUN, na.rm= na.rm ) 
+     totals <- aggregate(x, by= months, FUN=FUN, na.rm= na.rm, ... ) 
 
      # Replacing the NaNs by 'NA.
      # NaN's are obtained when using the FUN=mean with complete NA values

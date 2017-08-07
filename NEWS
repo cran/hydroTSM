@@ -1,5 +1,43 @@
 NEWS/ChangeLog for hydroTSM
 --------------------------
+0.5-1   07-Aug-2017 (after CRAN comments)
+        o DESCRIPTION file   : -) 'Keywords' field completly removed
+        o 'dwi'              : -) some examples were wrapped into 'dontrun' to avoid running times larger than 10s in CRAN.
+
+0.5-0   07-Aug-2017
+        o repository management moved from SVN to GIT, including rforge.
+        o citation with DOI is now possible (and new CITATION file).
+        o new function 'climograph' to draw a climograph based on precipitation and temperature data.
+        o 'subdaily2daily'   : -) now it works with several (all?) FUN functions, including 'sum', 'min', 'max'. (thanks to Jamis Bruening !))
+        o 'subdaily2daily'   : -) now it works with several (all?) FUN functions, including 'sum', 'min', 'max'. (thanks to Jamis Bruening !))
+        o 'monthlyfunction'  : -) argument '...' is now taken into account.
+        o 'seasonalfunction' : -) argument '...' is now taken into account.
+        o 'annualfunction'   : -) argument '...' is now taken into account.
+        o 'hydrokrige'       : -) 'require(maptools)' was replaced by 'requireNamespace("maptools", quietly = TRUE)'
+                               -) calls to 'overlay' were replaced by calls to 'over' because 'overaly' was deprecated in 'sp' 1.1-0.
+                               -) new examples about how to get the interpolated values in each cell and polygon when 'type="both"' is used (thanks to Jochen Scholtes !)
+        o 'mspplot   '       : -) 'require(maptools)' was replaced by 'requireNamespace("maptools", quietly = TRUE)'
+        o 'hypsometric'      : -) fixed (very unusual) error: "Error en integrate(f = f, lower = 0, upper = 1) : maximum number of subdivisions reached"
+                                  (thanks to Jose Martinez Batlle !)
+        o 'extract'          : -) 'trgt' argument allows multiple months or years to be selected (when 'class(trgt) %in% c("integer", "numeric")')
+        o 'fdc'              : -) 'cex.lab'  argument is working now (thanks to Elcin Tan !).
+                               -) new example about computing streamflow values corresponding to a given percentage of time equalled or exceeded (thanks to Prajjwal Panday !) 
+                               -) corrected small error in the documentation of 'lQ.thr' and 'hQ.thr' (thanks to Luis Andrés Guillén !)
+        o 'daily2annual.zoo' : -) fixed bug appeared in R 3.2.x (or 3.1.2) which raised an error for data.frames when 'out.fmt="%Y"': Error in format.default(structure(as.character(x), names = names(x), dim = dim(x),  : 
+        o 'drawTimeAxis      : -) new argument 'mgp' to provide greater flexibility.
+        o DESCRIPTION file   : -) 'sp' now requires version >= 1.1-0, because 'overlay' was deprecated in that version of 'sp'
+                               -) 'lattice' package was moved from 'Suggests' to 'Imports' (use of 'levelplot' function in 'matrixplot').
+                               -) 'maptools' package was moved from 'Suggests' to 'Imports' (use of 'readShapePoly' function in 'hydrokrige')
+                               -) Packages 'stats', 'utils', 'methods', 'graphics', 'grDevices' are now added in the Imports section.
+                               -) CRAN website removed from URL field in DESCRIPTION file (requested by CRAN). Only https://github.com/hzambran/hydroTSM is shown now.
+        o NAMESPACE file     : -) several functions explicitly imported from the c(stats, utils, methods, graphics, grDevices) to be compatible with R 3.3.0.
+                               -) 'plot.xts' NOT used anymore, to avoid error raised by xts>=0.10-0
+                               -) 'index' and 'time<-' imported from 'zoo' package.
+                               -) 'over', 'coordinates<-', 'proj4string<-' imported from 'sp' package.
+                               -) 'readShapePoly' imported from 'maptools' package.
+                               -) 'start', 'end' and 'window', 'aggregate' are now explicitly imported from the 'stats' package (affects 'dwi', 'izoo2rzoo' and 'monthlyfunction')
+                               -) Fifty three (53) S3 methods are now registered.
+
 0.4-2-1	22-Jan-2014 (after CRAN comments)
         o 'Author' field was removed from DESCRIPTION file
         o 'WhatsNew.txt' file was renamed 'ChangeLog'
@@ -31,7 +69,7 @@ NEWS/ChangeLog for hydroTSM
         o 'require(xts)' was removed from 'hydroplot'
         o 'zoo' package removed from 'Imports' and 'Enhances' (due to changes in CRAN policies)
         o 'xts' package removed from 'Imports' (due to changes in CRAN policies)
-        o improved vignette
+        o improved vignette (moved from Sweave to knitr)
 
 0.4-1	31-May-2013
         o DESCRIPTION : 'xts' package was added to the 'Imports' section

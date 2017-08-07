@@ -1,7 +1,7 @@
 # File subdaily2daily.R
-# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
-#                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2013 Mauricio Zambrano-Bigiarini
+# Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
+#                                 https://CRAN.R-project.org/package=hydroTSM
+# Copyright 2013-2017 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -42,8 +42,14 @@ subdaily2daily.default <- function(x, FUN, na.rm=TRUE, ... ) {
 ################################################################################
 # Started: 25-Mar-2013                                                         #
 # Updates: 26-Mar-2013 ; 08-Apr-2013 ; 09-Apr-2013                             #
+#          29-Nov-2015 ; 01-Dec-2015                                           #
 ################################################################################
 subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
+
+     # testing the existence of 'na.rm' argument
+     #args <- list(...)
+     #exist <- "na.rm" %in% names(args)
+     #exist
 
      # Checking that the user provied a valid class for 'x'   
      if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be 'xts' !!")
@@ -52,13 +58,16 @@ subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
      if (missing(FUN))
        stop("Missing argument: 'FUN' must contain a valid function for aggregating the sub-daily values")
 
-     # Daily aggregation. 
-     d <- apply.daily(x=x, FUN=FUN, na.rm=na.rm) # xts::apply.daily
+     # 'as.numeric' is necessary for being able to change the names to the output
+     d <- aggregate(x, by= function(tt) format(tt, "%Y-%m-%d"), FUN=FUN, na.rm= na.rm, ...)
 
-     # Removing time attibute, but not the dates
+#     # Daily aggregation. 
+#     d <- apply.daily(x=x, FUN=FUN, na.rm=na.rm) # xts::apply.daily
+
+     # Removing subdaily time attibute, but not the dates
      if (NCOL(d) == 1) {
-       d <- zoo(as.numeric(d), as.Date(format(time(d), "%Y-%m-%d") ) )
-     } else d <- zoo(coredata(d), as.Date(format(time(d), "%Y-%m-%d") ) )
+       d <- zoo(as.numeric(d), as.Date(time(d), format="%Y-%m-%d") ) 
+     } else d <- zoo(coredata(d), as.Date(time(d), format="%Y-%m-%d") ) 
 
      # Replacing the NaNs by 'NA.
      # mean(NA:NA, na.rm=TRUE) == NaN

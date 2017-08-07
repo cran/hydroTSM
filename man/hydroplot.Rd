@@ -203,11 +203,13 @@ hydroplot(OcaEnOnaQts, pfreq="o")
 hydroplot(OcaEnOnaQts, pfreq="o", from="1962-01-01", to="1962-12-31")
 
 ## seasonal plots
+\dontrun{
 hydroplot(OcaEnOnaQts, pfreq="seasonal", FUN=mean, stype="default")
 
 ## custom season names (let's assume to be in the Southern Hemisphere)
 hydroplot(OcaEnOnaQts, pfreq="seasonal", FUN=mean, 
           stype="default", season.names=c("Summer","Autumn", "Winter","Spring"))
+}
 
 #############
 ## Loading the monthly time series of precipitation within the Ebro River basin.
@@ -215,11 +217,15 @@ data(EbroPPtsMonthly)
 
 ## Plotting the monthly and annual values of precipitation at station "P9001", 
 ## stored in 'EbroPPtsMonthly'.
-sname2plot(EbroPPtsMonthly, sname="P9001", var.type="Precipitation", dates=1, pfreq="ma")
+sname2plot(EbroPPtsMonthly, sname="P9001", var.type="Precipitation", dates=1, 
+           pfreq="ma")
 
 ## Plotting seasonal precipitation at station "P9001"
+par(mar=c(5.1, 4.1, 4.1, 2.1))
+
 sname2plot(EbroPPtsMonthly, sname="P9001", FUN=sum, dates=1, pfreq="seasonal", 
            stype="default")
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -1,7 +1,7 @@
 %% File hydrokrige.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroTSM/
-%% Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2015 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{hydrokrige}
@@ -156,10 +156,7 @@ Logical, indicating if the interpolated values have to be plotted or not
 integer, number of colours that have to be used for plotting the interpolated values
 }
   \item{col.at}{
-Specify at which interpolated values colours change. Valid values are:  \cr
--) \kbd{R}    : uses the default setting of \code{\link[sp]{spplot}}  \cr
--) \code{numeric}: vector of reals giving the exact values in which the colors have to change. Useful when the user desires the same color for the same value when comparing to maps with different range of values \cr
--) \kbd{auto} : default option. \cr
+Specify at which interpolated values colours change.[MJ m-2 day-1] or [mm d-1]
    \code{at   <- seq(min, max,length.out=col.nintv)} \cr
    \code{min  <- floor(min(idw["var1.pred"]@data, na.rm=TRUE))} \cr
    \code{max  <- ceiling(max(idw["var1.pred"]@data, na.rm=TRUE))}
@@ -255,7 +252,7 @@ The automatic kriging is carried out by using a variogram generated automaticall
 
 \url{http://www.gstat.org/} \cr
 
-\url{http://r-spatial.sourceforge.net/gallery/}
+\url{http://rspatial.r-forge.r-project.org/}
 }
 
 \author{
@@ -323,6 +320,19 @@ x.ok <- hydrokrige(x.ts= x.ts, x.gis=EbroPPgis,
                    arrow.offset= c(900000,4750000), arrow.scale= 20000,
                    scalebar.plot= TRUE, 
                    sb.offset= c(400000,4480000), sb.scale= 100000)
+
+
+# Getting the interpolated values in each polygon 
+# ('var1.pred' field in the output data.frame object)
+x.ok.block <- slot(x.ok[["Block"]], "data")
+
+# Getting the interpolated values in each cell (SpatialPixelsDataFrame object)
+# (the pedicted values in each cell are stored in the 'var1.pred' field of the 
+#  'data' slot)
+x.ok.cells <- x.ok[["Cells"]]
+
+# Plotting the interpolated values in each cell
+spplot(x.ok.cells, "var1.pred")
 }
 
 ##################################################
@@ -367,6 +377,10 @@ EbroDEM1000m$ELEVATION <- EbroDEM1000m$band1
 
 # Saving memory
 EbroDEM1000m$band1 <- NULL
+
+# Forcing the projection of the DEM to be the same of the 'subcatchments' argument
+# (just because I know in advance they are the same)
+proj4string(EbroDEM1000m) <- p4s
 
 # Computing KED
 \dontrun{

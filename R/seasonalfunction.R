@@ -1,7 +1,7 @@
 # File seasonalfunction.R
-# Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
-#                                 http://cran.r-project.org/web/packages/hydroTSM/
-# Copyright 2009-2013 Mauricio Zambrano-Bigiarini
+# Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
+#                                 https://CRAN.R-project.org/package=hydroTSM
+# Copyright 2009-2017 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -46,6 +46,7 @@ seasonalfunction.default <- function(x, FUN, na.rm=TRUE, type="default",...) {
 # Started: 08-Aug-2011                                                         #
 # Updates: 08-Aug-2011                                                         #
 #          03-Abr-2013                                                         #
+#          29-Nov-2015                                                         #
 ################################################################################
 seasonalfunction.zoo <- function(x, FUN, na.rm=TRUE, type="default", ...) {
 
@@ -70,9 +71,8 @@ seasonalfunction.zoo <- function(x, FUN, na.rm=TRUE, type="default", ...) {
      dates   <- time(x)
      seasons <- factor( time2season( dates, type=type ), levels=seasons.lab )
      
-     # 'as.numeric' is necessary for being able to change the names to the output
      # zoo::aggregate
-     s <- aggregate(x, by= seasons, FUN=FUN, na.rm= na.rm )
+     s <- aggregate(x, by= seasons, FUN=FUN, na.rm= na.rm, ...)
 
      # Replacing the NaNs by 'NA.
      # NaN's are obtained when using the FUN=mean with complete NA values
