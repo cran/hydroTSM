@@ -1,13 +1,20 @@
 % File hydroplot.Rd
-% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
-%                                 http://cran.r-project.org/web/packages/hydroTSM/
-% Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+% Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
+%                                 http://www.rforge.net/hydroTSM/ ; 
+%                                 https://cran.r-project.org/package=hydroTSM
+% Copyright 2008-2020 Mauricio Zambrano-Bigiarini
 % Distributed under GPL 2 or later
 
 \name{hydroplot}
 \Rdversion{1.1}
 \alias{sname2plot}
+\alias{sname2plot.default}
+\alias{sname2plot.zoo}
+\alias{sname2plot.data.frame}
 \alias{hydroplot}
+\alias{hydroplot.default}
+\alias{hydroplot.zoo}
+\alias{hydroplot.data.frame}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Hydrological time series plotting and extraction.
@@ -18,24 +25,65 @@ Hydrological time series plotting and extraction.
 \code{sname2plot}: When \code{x} is a data frame whose columns contain the time series of several gauging stations, it takes the name of one gauging station and plots the graphs described above.
 }
 \usage{
-hydroplot(x, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", pfreq="dma",                      
+hydroplot(x, ...)
+sname2plot(x, ...)
+
+\method{hydroplot}{default}(x, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", pfreq="dma",                      
           var.type, var.unit="units", main=NULL, xlab="Time", ylab,
           win.len1=0, win.len2=0, tick.tstep="auto", lab.tstep="auto", 
           lab.fmt=NULL, cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3, 
           col=c("blue", "lightblue", "lightblue"), 
-          from, to, date.fmt= "\%Y-\%m-\%d", 
+          from=NULL, to=NULL, dates=1, date.fmt= "\%Y-\%m-\%d", 
           stype="default", season.names=c("Winter", "Spring", "Summer", "Autumn"), 
           h=NULL, ...)
 
-sname2plot(x, sname, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", 
+\method{hydroplot}{zoo}(x, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", pfreq="dma",                      
+          var.type, var.unit="units", main=NULL, xlab="Time", ylab,
+          win.len1=0, win.len2=0, tick.tstep="auto", lab.tstep="auto", 
+          lab.fmt=NULL, cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3, 
+          col=c("blue", "lightblue", "lightblue"), 
+          from=NULL, to=NULL, dates=1, date.fmt= "\%Y-\%m-\%d", 
+          stype="default", season.names=c("Winter", "Spring", "Summer", "Autumn"), 
+          h=NULL, ...)
+
+\method{hydroplot}{data.frame}(x, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", pfreq="dma",                      
+          var.type, var.unit="units", main=NULL, xlab="Time", ylab,
+          win.len1=0, win.len2=0, tick.tstep="auto", lab.tstep="auto", 
+          lab.fmt=NULL, cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3, 
+          col=c("blue", "lightblue", "lightblue"), 
+          from=NULL, to=NULL, dates=1, date.fmt= "\%Y-\%m-\%d", 
+          stype="default", season.names=c("Winter", "Spring", "Summer", "Autumn"), 
+          h=NULL, ...)
+
+\method{sname2plot}{default}(x, sname, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", 
            pfreq="dma", var.type, var.unit="units", main=NULL, 
            xlab="Time", ylab=NULL, win.len1=0, win.len2=0, 
            tick.tstep="auto", lab.tstep="auto", lab.fmt=NULL, 
            cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3,
            col=c("blue", "lightblue", "lightblue"), 
-           dates=1, date.fmt = "\%Y-\%m-\%d", from, to, stype="default", 
+           dates=1, date.fmt = "\%Y-\%m-\%d", from=NULL, to=NULL, stype="default", 
            season.names=c("Winter", "Spring", "Summer", "Autumn"), 
-           h=NULL )
+           h=NULL, ...)
+
+\method{sname2plot}{zoo}(x, sname, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", 
+           pfreq="dma", var.type, var.unit="units", main=NULL, 
+           xlab="Time", ylab=NULL, win.len1=0, win.len2=0, 
+           tick.tstep="auto", lab.tstep="auto", lab.fmt=NULL, 
+           cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3,
+           col=c("blue", "lightblue", "lightblue"), 
+           dates=1, date.fmt = "\%Y-\%m-\%d", from=NULL, to=NULL, stype="default", 
+           season.names=c("Winter", "Spring", "Summer", "Autumn"), 
+           h=NULL, ...)
+
+\method{sname2plot}{data.frame}(x, sname, FUN, na.rm=TRUE, ptype="ts+boxplot+hist", 
+           pfreq="dma", var.type, var.unit="units", main=NULL, 
+           xlab="Time", ylab=NULL, win.len1=0, win.len2=0, 
+           tick.tstep="auto", lab.tstep="auto", lab.fmt=NULL, 
+           cex=0.3, cex.main=1.3, cex.lab=1.3, cex.axis=1.3,
+           col=c("blue", "lightblue", "lightblue"), 
+           dates=1, date.fmt = "\%Y-\%m-\%d", from=NULL, to=NULL, stype="default", 
+           season.names=c("Winter", "Spring", "Summer", "Autumn"), 
+           h=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -202,8 +250,8 @@ hydroplot(OcaEnOnaQts, pfreq="o")
 ## only the year 1962 of the original time series
 hydroplot(OcaEnOnaQts, pfreq="o", from="1962-01-01", to="1962-12-31")
 
-## seasonal plots
 \dontrun{
+## seasonal plots
 hydroplot(OcaEnOnaQts, pfreq="seasonal", FUN=mean, stype="default")
 
 ## custom season names (let's assume to be in the Southern Hemisphere)

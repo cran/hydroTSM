@@ -1,7 +1,7 @@
 # File izoo2rzoo.R
 # Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
 #                                 https://CRAN.R-project.org/package=hydroTSM
-# Copyright 2009-2017 Mauricio Zambrano-Bigiarini
+# Copyright 2009-2023 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################ 
@@ -16,11 +16,15 @@
 
 # x         : time series of type zoo (very likely with some missing days)
 # date.fmt  : character indicating the format in which the dates are stored in 
-#             'dates', e.g. "%Y-%m-%d"
+#             \code{from} and \code{to}, e.g. "%Y-%m-%d"
 #             ONLY required when class(dates)=="factor" or "numeric"
 # from      : starting date for the merged output
-# to	    : ending date for the merged output
+# to	      : ending date for the merged output
 # tstep     : time step in which are stored the values of 'x'
+# tz        : specification of the time zone used for 'time(x)', 'from', 'to'
+#             System-specific (see time zones), but \code{""} is the current time zone, and \code{"GMT"} (the default value) is UTC (Universal Time, Coordinated). 
+#             See \code{\link[base]{Sys.timezone}} and \code{\link[base]{as.POSIXct}}. \cr
+#             This argument can be used when working with subdaily zoo objects to force using UTC instead of the local time zone
 
 izoo2rzoo <-function(x, ...) UseMethod("izoo2rzoo")
 
@@ -30,16 +34,17 @@ izoo2rzoo <-function(x, ...) UseMethod("izoo2rzoo")
 ################################################################################ 
 # Started: XX-XX-2009                                                          #
 # Updates: 23-Aug-2011                                                         #
+#          09-Oct-2022                                                         #
+#          03-Aug-2023                                                         #
 ################################################################################ 
 izoo2rzoo.default <- function(x, from= start(x), to= end(x), 
-                              date.fmt="%Y-%m-%d", tstep ="days", ...) {
+                              date.fmt, tstep, tz, ...) {
 
-  # Checking that the user provied a valid class for 'x'   
-  valid.class <- c("xts", "zoo")    
-  if (length(which(!is.na(match(class(x), valid.class )))) <= 0)  
-     stop("Invalid argument: 'class(x)' must be in c('xts', 'zoo')")
+  # Checking that the user provied a valid class for 'x'    
+  if ( !is.zoo(x) )  
+     stop("Invalid argument: 'class(x)' must be 'zoo' !")
 
-  izoo2rzoo.zoo(x=x, from=from, to=to, date.fmt=date.fmt, tstep=tstep, ...)
+  izoo2rzoo.zoo(x=x, from=from, to=to, date.fmt=date.fmt, tstep=tstep, tz=tz, ...)
 
 } # 'izoo2rzoo.default' END
 
@@ -52,49 +57,127 @@ izoo2rzoo.default <- function(x, from= start(x), to= end(x),
 #          07-May-2012                                                         #
 #          16-Oct-2012                                                         #
 #          29-May-2013                                                         #
+#          17-Jun-2022 ; 20-Jun-2022 ; 08-Oct-2022 ; 09-Oct-2022 ; 11-Oct-2022 #
+#          12-Oct-2022                                                         #
+#          25-May-2023 ; 03-Aug-2023 ; 04-Nov-2023 ; 16-Nov-2023 ; 17-Nov-2023 #
+#          25-Nov-2023                                                         #
 ################################################################################ 
 
 izoo2rzoo.zoo <- function(x, from= start(x), to= end(x), 
-                          date.fmt="%Y-%m-%d", tstep ="days", ... ) {
+                          date.fmt, tstep, tz, ... ) {
 
-  if (!is.zoo(x)) stop("Invalid argument: 'x' must be of class 'zoo'")
-      
-  ifelse ( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
-           grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
-           grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE),
-           subdaily.date.fmt <- TRUE, subdaily.date.fmt <- FALSE )
-  
-  if(subdaily.date.fmt) {
-    from <- as.POSIXct(from, format=date.fmt)
-    to   <- as.POSIXct(to, format=date.fmt)
-  } else {
-      from <- as.Date(from, format=date.fmt)
-      to   <- as.Date(to, format=date.fmt)
-    } # ELSE end
-    
-  # If the index of 'x' is character, it is converted into a Date object
-  if ( class(time(x))[1] %in% c("factor", "character") )
-    ifelse(subdaily.date.fmt, time(x) <- as.POSIXct(dates, format=date.fmt),
-                              time(x) <- as.Date(dates, format=date.fmt) )
+  if (!is.zoo(x)) stop("Invalid argument: 'x' must be of class 'zoo' !")
 
   # sampling frequency of 'x'           
   x.freq <- sfreq(x)
         
-  # checking that date.fmt and the sampling frequency of 'x' are compatible 
+  # Cheking if 'x is a sub-daily zoo object  
   if (x.freq %in% c("minute","hourly") ) {
-    if (!subdaily.date.fmt) stop("Invalid argument: 'date.fmt' (", date.fmt, ") is not compatible with a sub-daily time series !!")
-  } else
-       if (subdaily.date.fmt) {
-          time(x) <- as.POSIXct(time(x))
-          warning("'date.fmt' (", date.fmt, ") is sub-daily, while 'x' is a '", x.freq, "' ts => 'time(x)=as.POSIXct(time(x))'")
-       } # IF end
- 
+    subdaily.ts <- TRUE
+  } else subdaily.ts <- FALSE
+
+  # Defining the 'tstep' value
+  if ( missing(tstep) )
+    switch(x.freq,
+           minute = {tstep <- "min"},
+           hourly = {tstep <- "hours"},
+           daily = {tstep <- "days"},
+           weeekly = {tstep <- "weeks"},
+           monthky = {tstep <- "months"},
+           quarterly = {tstep <- "quarters"},
+           annual = {tstep <- "years"}
+           )
+
+  # Automatic detection of 'date.fmt'
+  if ( missing(date.fmt) ) {
+    if ( subdaily.ts ) {
+      date.fmt <- "%Y-%m-%d %H:%M:%S"
+    } else date.fmt <- "%Y-%m-%d"
+  } # IF end
+
+  # Automatic detection of 'tz'
+  missingTZ <- FALSE
+  if (missing(tz)) {
+    missingTZ <- TRUE
+    tz        <- ""
+  } # IF end
+      
+  ifelse ( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
+           grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
+           grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE), 
+           subdaily.date.fmt <- TRUE, subdaily.date.fmt <- FALSE )
+
+  # If the index of 'x' is character, it is converted into a Date object
+  if ( class(time(x))[1] %in% c("factor", "character") )
+    #ifelse(subdaily.date.fmt, time(x) <- as.POSIXct(time(x), format=date.fmt, tz=tz),
+    ifelse(subdaily.date.fmt, time(x) <- as.POSIXct(time(x), format=date.fmt),
+                              time(x) <- as.Date(time(x), format=date.fmt) )
+
+  # If 'from' was given as Date, but 'x' is sub-daily
+  if (!missing(from)) {
+    if (from > to) stop("Invalid argument: 'from > to' !")
+
+    if (from > end(x)) stop("Invalid argument: 'from > end(x)' !")
+
+    if ( subdaily.date.fmt & !(grepl(":", from, fixed=TRUE) ) )
+      from <- paste(from, "00:00:00")
+
+    if ( subdaily.date.fmt & missingTZ )
+      from <- as.POSIXct(from, tz=tz)
+  } # IF end
+
+  # If 'to' was given as Date, but 'x' is sub-daily
+  if (!missing(to)) {
+    if (to < from ) stop("Invalid argument: 'to < from' !")
+
+    if (to < start(x) ) stop("Invalid argument: 'to < start(x)' !")
+
+    if ( subdaily.date.fmt & !(grepl(":", to, fixed=TRUE) ) )
+      to <- paste(to, "00:00:00")
+
+    if ( subdaily.date.fmt & missingTZ )
+      to <- as.POSIXct(to, tz=tz)
+  } # IF end
+        
+  # checking that date.fmt and the sampling frequency of 'x' are compatible 
+  if ( subdaily.ts ) {
+    if (!subdaily.date.fmt) 
+      stop("Invalid argument: 'date.fmt' (", date.fmt, 
+           ") is not compatible with a sub-daily time series !!")
+  } else {
+           if (subdaily.date.fmt) {
+             #time(x) <- as.POSIXct(time(x), tz=tz)
+             time(x) <- as.POSIXct(time(x))
+             warning("'date.fmt' (", date.fmt, ") is sub-daily, while 'x' is a '", 
+                     x.freq, "' ts => 'time(x)=as.POSIXct(time(x), tz)'")
+           } # IF end    
+          } # ELSE end
+
+  if (subdaily.ts) {
+    dt <-  try(as.POSIXct(from, format=date.fmt, tz=tz))
+    #dt <-  try(as.POSIXct(from, format=date.fmt))
+  } else dt <- try(as.Date(from, format=date.fmt))
+  if("try-error" %in% class(dt) || is.na(dt)) {
+    stop("Invalid argument: format of 'from' is not compatible with 'date.fmt' !")
+  } else if (subdaily.ts) {
+      from <- as.POSIXct(from, format=date.fmt, tz=tz)
+      #from <- as.POSIXct(from, format=date.fmt)
+    } else from <- as.Date(from, format=date.fmt)
+
+  if (subdaily.ts) {
+    dt <-  try(as.POSIXct(to, format=date.fmt, tz=tz))
+  } else dt <- try(as.Date(to, format=date.fmt))
+  if("try-error" %in% class(dt) || is.na(dt)) {
+    stop("Invalid argument: format of 'to' is not compatible with 'date.fmt' !")
+  } else if (subdaily.ts) {
+      to <- as.POSIXct(to, format=date.fmt, tz=tz)
+    } else to <- as.Date(to, format=date.fmt)
+
   # Creating a regular time series with NA's in all dates in [from, to]
   dates  <- seq(from=from, to=to, by= tstep)
   na.zoo <- zoo(rep(NA, length(dates)), dates)
 
   # Selecting only those data within the time period between 'from' and 'to'
-  #x.sel <- x[ time(x) %in% dates, ]
   x.sel <- window(x, start=from, end=to)
 
   # Creating a regular time series with NA's in dates in which 'x' has no data

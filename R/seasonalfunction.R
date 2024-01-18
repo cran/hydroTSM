@@ -1,7 +1,7 @@
 # File seasonalfunction.R
 # Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
 #                                 https://CRAN.R-project.org/package=hydroTSM
-# Copyright 2009-2017 Mauricio Zambrano-Bigiarini
+# Copyright 2009-2022 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -47,6 +47,7 @@ seasonalfunction.default <- function(x, FUN, na.rm=TRUE, type="default",...) {
 # Updates: 08-Aug-2011                                                         #
 #          03-Abr-2013                                                         #
 #          29-Nov-2015                                                         #
+#          22-Oct-2022                                                         #
 ################################################################################
 seasonalfunction.zoo <- function(x, FUN, na.rm=TRUE, type="default", ...) {
 
@@ -55,7 +56,7 @@ seasonalfunction.zoo <- function(x, FUN, na.rm=TRUE, type="default", ...) {
      
      # Checking the user provide a valid value for 'x'
      if (is.na(match(sfreq(x), c("daily", "monthly"))))
-	stop(paste("Invalid argument: 'x' is not a daily or mothly ts, it is a ", sfreq(x), " ts", sep="") )
+	     stop(paste("Invalid argument: 'x' is not a daily or monthly ts, it is a ", sfreq(x), " ts", sep="") )
 	
      # Checking that the user provied a valid value for 'type'   
      valid.types <- c("default", "FrenchPolynesia")    
@@ -162,7 +163,7 @@ seasonalfunction.data.frame <- function(x, FUN, na.rm=TRUE, type="default",
   
   # If 'dates' is a number, it indicates the index of the column of 'x' that stores the dates
   # The column with dates is then substracted form 'x' for easening the further computations
-  if ( class(dates) == "numeric" ) {
+  if ( inherits(dates, "numeric") ) {
     tmp   <- dates
     dates <- as.Date(x[, dates], format= date.fmt)
     x     <- x[-tmp]
@@ -170,12 +171,12 @@ seasonalfunction.data.frame <- function(x, FUN, na.rm=TRUE, type="default",
 
   # If 'dates' is a factor, it have to be converted into 'Date' class,
   # using the date format  specified by 'date.fmt'
-  if ( class(dates) == "factor" ) dates <- as.Date(dates, format= date.fmt)
+  if ( inherits(dates, "factor") ) dates <- as.Date(dates, format= date.fmt)
   
   # If 'dates' is already of Date class, the following line verifies that
   # the number of days in 'dates' be equal to the number of element in the
   # time series corresponding to the 'st.name' station
-  if ( ( class(dates) == "Date") & (length(dates) != nrow(x) ) )
+  if ( ( inherits(dates, "Date") ) & (length(dates) != nrow(x) ) )
      stop("Invalid argument: 'length(dates)' must be equal to 'nrow(x)'")
   
   # Transforming 'x' into zoo

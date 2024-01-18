@@ -1,7 +1,7 @@
 # File daily2annual.R
 # Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
 #                                 https://CRAN.R-project.org/package=hydroTSM
-# Copyright 2008-2017 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2023 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -28,13 +28,14 @@ daily2annual <-function(x, ...) UseMethod("daily2annual")
 # Started: XX-XXX-2008                                                         #
 # Updates: 09-Aug-2011                                                         #
 #          08-Apr-2013                                                         #
+#          30-Jul-2023                                                         #
 ################################################################################
-daily2annual.default <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",...) {
+daily2annual.default <- function(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="%Y",...) {
 
      # Checking that 'x' is a zoo object
-     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
+     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be 'zoo' !")
 
-     daily2annual.zoo(x=x, FUN=FUN, na.rm=na.rm, out.fmt=out.fmt, ...)
+     daily2annual.zoo(x=x, FUN=FUN, na.rm=na.rm, na.rm.max=na.rm.max, out.fmt=out.fmt, ...)
      
 } # 'daily2annual.default' end
 
@@ -47,8 +48,49 @@ daily2annual.default <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",...) {
 #          04-Jun-2012                                                         #
 #          08-Apr-2013                                                         #
 #          21-Jul-2015                                                         #
+#          21-May-2022 ; 25-May-2022 ; 23-Dic-2022 ; 27-Dec-2022               #
+#          20-Jun-2023 ; 30-Jul-2023                                           #
 ################################################################################
-daily2annual.zoo <- function(x, FUN, na.rm=TRUE, out.fmt="%Y-%m-%d", ...) {
+daily2annual.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="%Y-%m-%d", ...) {
+
+
+  get.dates <- function(x, years, fun, fn.name) {
+
+    is.subdaily <- ( (inherits(time(x), "POSIXct")) | (inherits(time(x), "POSIXlt")) )
+    is.POISXct  <- inherits(time(x), "POSIXct")
+
+    years.unique <- as.numeric(unique(years))
+    nyears       <- length(years.unique)
+
+    if ( (fn.name=="max") | (fn.name=="min")) {
+
+      if (fn.name=="max") {
+        datetimes.pos <- aggregate(x, by=years, FUN=which.max)
+      } else datetimes.pos <- aggregate(x, by=years, FUN=which.min)
+
+      datetimes.pos <- as.numeric(datetimes.pos)
+
+      # Getting the datetime where the min/max value occurs for each year in 'x'.
+      # this is a list object
+      datetimes <- sapply(1:nyears, function(i, x, datetimes.pos) { 
+                 all.dates.inyear <- time(extract( x, trgt=years.unique[i]))
+                 all.dates.inyear[datetimes.pos[i]]
+               }, x=x, datetimes.pos=datetimes.pos, simplify=FALSE)   
+
+      # unblisting (and preserving datetime attrribute)
+      datetimes <- do.call("c", datetimes)
+
+    } else if (is.subdaily) {
+        datetimes <- paste0(years.unique, "-01-01 00:00:00")
+        if (is.POISXct) {
+          datetimes <- as.POSIXct(datetimes)
+        } else datetimes <- as.POSIXlt(datetimes)
+      } else datetimes <- as.Date(paste0(years.unique, "-01-01"))
+
+    return( datetimes )
+    
+  } # 'get.dates' END
+
 
   # Checking that the user provide a valid value for 'FUN'
   if (missing(FUN)) 
@@ -64,11 +106,34 @@ daily2annual.zoo <- function(x, FUN, na.rm=TRUE, out.fmt="%Y-%m-%d", ...) {
 	   
   # Annual index for 'x'
   dates  <- time(x)
-  y      <- as.numeric(format( dates, "%Y"))
-  years  <- factor( y, levels=unique(y) )
+  #y      <- as.numeric(format( dates, "%Y"))
+  #years  <- factor( y, levels=unique(y) )
+  years  <- format( dates, "%Y")
 
   # Computing Annual time series
-  tmp <- aggregate(x, by=years, FUN, na.rm= na.rm)
+  if (missing(na.rm)) {
+    tmp <- aggregate(x, by=years, FUN, ...)
+  } else tmp <- aggregate(x, by=years, FUN, ..., na.rm=na.rm)
+
+
+  # Removing annual values in the output object for months with 
+  # more than 'na.rm.max' percentage of NAs in a given year
+  if ( na.rm & (na.rm.max != 0) ) {
+
+    # Checking that 'na.rm.max' is in [0, 1]
+    if ( (na.rm.max <0) | (na.rm.max <0) )
+      stop("Invalid argument: 'na.rm.max' must be in [0, 1] !")
+
+    # Computing the percentage of missing values in each year
+    na.pctg <- cmv(x, tscale="annual")
+
+    # identifying years with a percentage of missing values higher than 'na.rm.max'
+    na.pctg.index <- which( na.pctg >= na.rm.max)
+
+    # Setting as NA all the years with a percentage of missing values higher than 'na.rm.max'
+    tmp[na.pctg.index] <- NA 
+  } # IF end
+
 
   # Replacing the NaNs by 'NA.
   # mean(NA:NA, na.rm=TRUE) == NaN
@@ -78,15 +143,29 @@ daily2annual.zoo <- function(x, FUN, na.rm=TRUE, out.fmt="%Y-%m-%d", ...) {
   # Replacing all the Inf and -Inf by NA's
   # min(NA:NA, na.rm=TRUE) == Inf  ; max(NA:NA, na.rm=TRUE) == -Inf
   inf.index <- which(is.infinite(tmp))
-  if ( length(inf.index) > 0 ) tmp[inf.index] <- NA 
+  if ( length(inf.index) > 0 ) tmp[inf.index] <- NA
+
+  # getting the name of the function as character
+  fn.name <- substitute(FUN)
 	 
   # date format for the output annual series:
-  if (out.fmt == "%Y-%m-%d") 
-    time(tmp) <- as.Date(paste( time(tmp), "-01-01", sep="")) # zoo::as.Date  
+  if (out.fmt == "%Y-%m-%d") {
+    if (NCOL(tmp) == 1) {
+      ldates <- get.dates(x, years=years, fun=FUN, fn.name=fn.name)
+      out    <- zoo::zoo(tmp, ldates)
+    } else { # NCOL(tmp) > 1
+        if ( (fn.name=="max") | (fn.name=="min")) {
+          out   <- vector("list", NCOL(tmp))
+          for (i in 1:NCOL(tmp)) {
+            ldates   <-  get.dates(x[,i], years=years, fun=FUN, fn.name=fn.name)
+            out[[i]] <-  zoo(tmp[,i], ldates)
+          } # FOR end       
+        } else out <- tmp
+      } # ELSE end
 
-  if (NCOL(tmp) == 1) tmp <- zoo(as.numeric(tmp), time(tmp))
+  } else out <- tmp
 
-  return(tmp)
+  return(out)
 
 } # 'daily2annual.zoo' end
 
@@ -98,6 +177,8 @@ daily2annual.zoo <- function(x, FUN, na.rm=TRUE, out.fmt="%Y-%m-%d", ...) {
 # Updates: 09-Aug-2011                                                         #
 #          04-Jun-2012                                                         #
 #          29-May-2013                                                         #      
+#          22-Aug-2022                                                         #
+#          20-Jun-2023 ; 30-Jul-2023                                           #
 ################################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the
 #             dates for correponding to the 'sname' station
@@ -119,10 +200,10 @@ daily2annual.zoo <- function(x, FUN, na.rm=TRUE, out.fmt="%Y-%m-%d", ...) {
 #                              The third column will contain the seasonal
 #                                value corresponding to that year and that station.
 # 'verbose' : logical; if TRUE, progress messages are printed
-daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
+daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="%Y",
                                     dates=1, date.fmt="%Y-%m-%d",
                                     out.type="data.frame",
-                                    verbose=TRUE,...) {
+                                    verbose=TRUE, ...) {
                                     
   # Checking that the user provied a valid argument for 'out.type'
   if (is.na(match( out.type, c("data.frame", "db") ) ) )
@@ -138,7 +219,7 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
 
   # If 'dates' is a number, it indicates the index of the column of 'x' that stores the dates
   # The column with dates is then substracted form 'x' for easening the further computations
-  if ( class(dates) == "numeric" ) {
+  if ( inherits(dates, "numeric") ) {
     tmp   <- dates
     dates <- as.Date(x[, dates], format= date.fmt) # zoo::as.Date
     x     <- x[-tmp]
@@ -146,12 +227,12 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
 
   # If 'dates' is a factor, it have to be converted into 'Date' class,
   # using the date format  specified by 'date.fmt'
-  if ( class(dates) == "factor" ) dates <- as.Date(dates, format= date.fmt) # zoo::as.Date
+  if ( inherits(dates, "factor") ) dates <- as.Date(dates, format= date.fmt) # zoo::as.Date
 
   # If 'dates' is already of Date class, the following line verifies that
   # the number of days in 'dates' be equal to the number of element in the
   # time series corresponding to the 'st.name' station
-  if ( ( class(dates) == "Date") & (length(dates) != nrow(x) ) )
+  if ( ( inherits(dates, "Date") ) & (length(dates) != nrow(x) ) )
      stop("Invalid argument: 'length(dates)' must be equal to 'nrow(x)'")
      
   # Transforming 'x' into a zoo object
@@ -160,7 +241,8 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
   ##############################################################################
   if (out.type == "data.frame") {
   
-    z <- daily2annual.zoo(x=x, FUN=FUN, na.rm=na.rm, out.fmt=out.fmt, ...)
+    z <- daily2annual.zoo(x=x, FUN=FUN, ..., na.rm=na.rm, 
+                          na.rm.max=na.rm.max, out.fmt=out.fmt)
     
   } else if (out.type == "db") { 
 
@@ -182,7 +264,8 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
        # Computing the amount of years with data within 'x'
        ndays    <- length(dates) # number of days in the period
        tmp      <- vector2zoo(rep(0, ndays), dates)
-       tmp      <- daily2annual.zoo(x= tmp, FUN=FUN, na.rm=na.rm, out.fmt="%Y-%m-%d")
+       tmp      <- daily2annual.zoo(x= tmp, FUN=FUN, ..., na.rm=na.rm, 
+                                    na.rm.max=na.rm.max, out.fmt="%Y-%m-%d")
        nyears   <- length(tmp) #number of years in the period
 
        # Generating a string vector with the years effectively within 'x'
@@ -198,8 +281,6 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
                            byrow = TRUE, dimnames = NULL) )
        colnames(z) <- field.names
 
-       y = x
-
        for (j in 1:nstations) {
 
            if (verbose) message( "Station: ", format(snames[j], width=10, justify="left"),
@@ -209,7 +290,8 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
                                  "%" )
 
           # Computing the annual values
-          a <- daily2annual.zoo(x= x[,j], FUN=FUN, na.rm=na.rm, out.fmt="%Y-%m-%d")
+          a <- daily2annual.zoo(x= x[,j], FUN=FUN, ..., na.rm=na.rm, 
+                                na.rm.max=na.rm.max, out.fmt="%Y-%m-%d")
 
           # Putting the annual/monthly values in the output data.frame
           # The first column of 'x' corresponds to the Year
@@ -234,19 +316,20 @@ daily2annual.data.frame <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
 ################################################################################
 # Started: XX-XXX-2008                                                         #
 # Updates: 09-Aug-2011                                                         #
-#          29-May-2013                                                         #   
+#          29-May-2013                                                         # 
+#          30-Jul-2023                                                         #  
 ################################################################################
-daily2annual.matrix  <- function(x, FUN, na.rm=TRUE, out.fmt="%Y",
+daily2annual.matrix  <- function(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="%Y",
                                  dates=1, date.fmt="%Y-%m-%d",
                                  out.type="data.frame",
                                  verbose=TRUE,...) {
 
    x <- as.data.frame(x)
    #NextMethod("daily2annual")
-   daily2annual.data.frame(x=x, FUN=FUN, na.rm=na.rm,
+   daily2annual.data.frame(x=x, FUN=FUN, na.rm=na.rm, na.rm.max=na.rm.max,
                            out.fmt=out.fmt,
                            dates=dates, date.fmt=date.fmt,
                            out.type=out.type,
-                           verbose=verbose,...)
+                           verbose=verbose, ...)
 
 } # 'daily2annual.matrix  ' END

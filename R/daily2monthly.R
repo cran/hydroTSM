@@ -1,7 +1,7 @@
 # File daily2monthly.R
 # Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
 #                                 https://CRAN.R-project.org/package=hydroTSM
-# Copyright 2008-2017 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2023 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -19,7 +19,7 @@
 #          TRUE : the monthly and annual values  are computed considering only those values different from NA
 #          FALSE: if there is AT LEAST one NA within a year, the monthly and annual values are NA
 
-daily2monthly <-function(x, ...) UseMethod("daily2monthly")
+daily2monthly <- function(x, ...) UseMethod("daily2monthly")
 
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #
@@ -27,13 +27,14 @@ daily2monthly <-function(x, ...) UseMethod("daily2monthly")
 # Started: XX-XXX-2008                                                         #
 # Updates: 09-Aug-2011                                                         #
 #          08-Apr-013                                                          #
+#          28-Jul-2023                                                         #
 ################################################################################
-daily2monthly.default <- function(x, FUN, na.rm=TRUE, ... ) {
+daily2monthly.default <- function(x, FUN, na.rm=TRUE, na.rm.max=0, ... ) {
 
      # Checking that 'x' is a zoo object
-     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be in c('zoo', 'xts')")
+     if ( !is.zoo(x) ) stop("Invalid argument: 'class(x)' must be 'zoo' !")
 
-     daily2monthly.zoo(x=x, FUN=FUN, na.rm=na.rm,...)
+     daily2monthly.zoo(x=x, FUN=FUN, na.rm=na.rm, na.rm.max=na.rm.max, ...)
 
 } # 'daily2monthly.default' end
 
@@ -44,8 +45,9 @@ daily2monthly.default <- function(x, FUN, na.rm=TRUE, ... ) {
 # Started: 09-Aug-2011                                                         #
 # Updates: 09-Aug-2011                                                         #
 #          08-Apr-2013                                                         #
+#          20-Jun-2023 ; 28-Jul-2023                                           #
 ################################################################################
-daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
+daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, ... ) {
 
   # Checking the user provide a valid value for 'FUN'
   if (missing(FUN))
@@ -59,8 +61,26 @@ daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
   dates  <- time(x)
   months <- as.Date( as.yearmon( time(x) ) ) # zoo::as.Date ; zoo::as.yearmon
 
-  # Generating a Monthly time series 
-  tmp <- aggregate( x, by=months, FUN, na.rm= na.rm ) 
+  # Computing the Monthly time series 
+  tmp <- aggregate( x, by=months, FUN, na.rm= na.rm, ... ) 
+
+  # Removing monthly values in the output object for months with 
+  # more than 'na.rm.max' percentage of NAs in a given month
+  if ( na.rm & (na.rm.max != 0) ) {
+
+    # Checking that 'na.rm.max' is in [0, 1]
+    if ( (na.rm.max <0) | (na.rm.max <0) )
+      stop("Invalid argument: 'na.rm.max' must be in [0, 1] !")
+
+    # Computing the percentage of missing values in each month
+    na.pctg <- cmv(x, tscale="monthly")
+
+    # identifying months with a percentage of missing values higher than 'na.rm.max'
+    na.pctg.index <- which( na.pctg >= na.rm.max)
+
+    # Setting as NA all the monhts with a percentage of missing values higher than 'na.rm.max'
+    tmp[na.pctg.index] <- NA 
+  } # IF end
   
   # Replacing the NaNs by 'NA.
   # mean(NA:NA, na.rm=TRUE) == NaN
@@ -87,6 +107,8 @@ daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
 # Updates: 09-Aug-2011                                                         #
 #          04-Jun-2012                                                         #
 #          29-May-2013                                                         #
+#          23-Aug-2022                                                         #
+#          20-Jun-2023 ; 28-Jul-2023                                           #
 ################################################################################
 # 'dates'   : "numeric", "factor", "Date" indicating how to obtain the
 #             dates for correponding to the 'sname' station
@@ -109,11 +131,11 @@ daily2monthly.zoo <- function(x, FUN, na.rm=TRUE, ... ) {
 #                              The fourth colum stores the numerical values corresponding to the year and month specified in the two previous fields.
 # 'out.fmt' : character, for selecting if the result will be 'numeric' or 'zoo'. Valid values are: c('numeric', 'zoo')
 # 'verbose'      : logical; if TRUE, progress messages are printed
-daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
+daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE, na.rm.max=0,
                                      dates=1, date.fmt="%Y-%m-%d",
-				     out.type="data.frame",
-				     out.fmt="numeric",
-				     verbose=TRUE,...) {
+				                             out.type="data.frame",
+				                             out.fmt="numeric",
+				                             verbose=TRUE, ...) {
   
   # Checking that the user provied a valid argument for 'out.type'
   if (is.na(match( out.type, c("data.frame", "db") ) ) )
@@ -133,7 +155,7 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
 
   # If 'dates' is a number, it indicates the index of the column of 'x' that stores the dates
   # The column with dates is then substracted form 'x' for easening the further computations
-  if ( class(dates) == "numeric" ) {
+  if ( inherits(dates, "numeric") ) {
     tmp   <- dates
     dates <- as.Date(x[, dates], format= date.fmt) # zoo::as.Date
     x     <- x[-tmp]
@@ -141,12 +163,12 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
 
   # If 'dates' is a factor, it have to be converted into 'Date' class,
   # using the date format  specified by 'date.fmt'
-  if ( class(dates) == "factor" ) dates <- as.Date(dates, format= date.fmt) # zoo::as.Date
+  if ( inherits(dates, "factor") ) dates <- as.Date(dates, format= date.fmt) # zoo::as.Date
 
   # If 'dates' is already of Date class, the following line verifies that
   # the number of days in 'dates' be equal to the number of element in the
   # time series corresponding to the 'st.name' station
-  if ( ( class(dates) == "Date") & (length(dates) != nrow(x) ) )
+  if ( ( inherits(dates, "Date") ) & (length(dates) != nrow(x) ) )
      stop("Invalid argument: 'length(dates)' must be equal to 'nrow(x)'")
      
   # Transforming 'x' into a zoo object
@@ -155,7 +177,7 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
   ##############################################################################
   if (out.type == "data.frame") {
   
-    z <- daily2monthly.zoo(x=x, FUN=FUN, na.rm=na.rm, ...)
+    z <- daily2monthly.zoo(x=x, FUN=FUN, na.rm=na.rm, na.rm.max=na.rm.max, ...)
     
     if (out.fmt == "numeric") {
        snames      <- colnames(z)
@@ -206,21 +228,21 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
                                   format(round(100*j/nstations,2), width=6, justify="left"),
                                   "%" )
 
-	    # Computing the monthly values
-	    m     <- daily2monthly.zoo(x= x[,j], FUN=FUN, na.rm=na.rm)
-            dates <- time(m)
+	        # Computing the monthly values
+	        m     <- daily2monthly.zoo(x= x[,j], FUN=FUN, ..., na.rm=na.rm, na.rm.max=na.rm.max)
+          dates <- time(m)
             
-	    if (out.fmt == "numeric") m <- coredata(m)
+	        if (out.fmt == "numeric") m <- coredata(m)
 
-	# Putting the annual/monthly values in the output data.frame
-        # The first column of 'x' corresponds to the Year
-        row.ini <- (j-1)*nmonths + 1
-        row.fin <-  j*nmonths
+	        # Putting the annual/monthly values in the output data.frame
+          # The first column of 'x' corresponds to the Year
+          row.ini <- (j-1)*nmonths + 1
+          row.fin <-  j*nmonths
 
-        z[row.ini:row.fin, 1] <- snames[j] # it is automatically repeated 'nmonths' times
-        z[row.ini:row.fin, 2] <- format(as.Date(dates), "%Y") # zoo::as.Date
-        z[row.ini:row.fin, 3] <- format(as.Date(dates), "%b") # zoo::as.Date
-        z[row.ini:row.fin, 4] <- m
+          z[row.ini:row.fin, 1] <- snames[j] # it is automatically repeated 'nmonths' times
+          z[row.ini:row.fin, 2] <- format(as.Date(dates), "%Y") # zoo::as.Date
+          z[row.ini:row.fin, 3] <- format(as.Date(dates), "%b") # zoo::as.Date
+          z[row.ini:row.fin, 4] <- m
 
         } # FOR end
         
@@ -237,19 +259,21 @@ daily2monthly.data.frame <- function(x, FUN, na.rm=TRUE,
 # Started: XX-XXX-2008                                                         #
 # Updates: 09-Aug-2011                                                         #
 #          29-May-2013                                                         #
+#          28-Jul-2023                                                         #
 ################################################################################
-daily2monthly.matrix  <- function(x, FUN, na.rm=TRUE,
+daily2monthly.matrix  <- function(x, FUN, na.rm=TRUE, na.rm.max=0,
                                   dates=1, date.fmt="%Y-%m-%d",
-				  out.type="data.frame",
-				  out.fmt="numeric",
+				                          out.type="data.frame",
+				                          out.fmt="numeric",
                                   verbose=TRUE,...) {
 
    x <- as.data.frame(x)
    #NextMethod("daily2annual")  # I don't know why is redirecting to 'daily2monthly.default' instead of 'daily2monthly.data.frame'....
-   daily2monthly.data.frame(x=x, FUN=FUN, na.rm=na.rm,
+   daily2monthly.data.frame(x=x, FUN=FUN, na.rm=na.rm, 
+                            na.rm.max=na.rm.max,
                             dates=dates, date.fmt=date.fmt,
-			    out.type=out.type,
-			    out.fmt=out.fmt,
+			                      out.type=out.type,
+			                      out.fmt=out.fmt,
                             verbose=verbose,...)
 
 } # 'daily2monthly.matrix  ' END

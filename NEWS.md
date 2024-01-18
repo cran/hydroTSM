@@ -1,7 +1,111 @@
 NEWS/ChangeLog for hydroTSM
---------------------------
 
-0.6-0   11-Mar-2020
+--------------------------
+# Changes in version 0.7-0  16-Jan-2024
+
+## New functions
+        o 'baseflow'          : for computing baseflow using the filter proposed by Arnold and Allen (1999). 
+
+        o 'plot_pq'           : for plotting precipitation and streamflow time series in the same figure, or for plotting monthly variation of streamflow and precipitation values, with uncertainty bounds around median values.
+
+        o 'calendarHeatmap'   : for displaying time-series as a calendar heatmap
+
+        o 'subhourly2hourly'  : for aggregating sub-hourly values into hourly ones.
+
+        o 'subhourly2nminutes': for aggregating sub-hourly values into n-minutes ones.
+
+        o 'daily2weekly'      : for aggregating (sub)daily values into weekly ones.
+
+        o 'subdaily2weekly'   : for aggregating subdaily values into weekly ones, with optional sarting time for a day.
+
+        o 'cmv'               : to compute the percentage/amount of missing values in a zoo object, using a user-defined temporal scale.
+
+        o 'si'                : to compute the seasonality index for precipitation (Walsh and Lawler, 1981).
+
+## New features                       
+        o '(sub)daily2monthly':  -) new argument 'na.rm.max' to define the maximum percentage of missing values allowed in each month to keep the monthly aggregated value in the output object.
+
+        o 'subdaily2daily'    :  -) new argument 'na.rm.max' to define the maximum percentage of missing values allowed in each day.
+                                 -) new argument 'start.fmt' to indicate the format used in 'start'.
+                                 -) new argument 'tz' to indicate the time zone used for both 'x' and start' arguments.
+                                
+        o 'daily2annual'      :  -) new argument 'na.rm.max' to  to define the maximum percentage of missing values allowed in each year.
+        
+        o 'daily2monthly'     :  -) new argument 'na.rm.max' to  to define the maximum percentage of missing values allowed in each month.
+        
+        o 'subdaily2annual'   :  -) new argument 'na.rm.max' to  to define the maximum percentage of missing values allowed in each year.
+
+        o 'hip'               : -) new argument 'tz' to allow the user to specify the desired time zone.
+
+        o 'hydroplot'         : -) new argument 'dates' in order to facilitate the transformation into zoo when working with data.frame objects
+                                -) 'from' argument has a default value of NULL
+                                -) 'to' argument has a default value of NULL    
+                       
+        o 'sname2plot'        : -) 'from' argument has a default value of NULL
+                                -) 'to' argument has a default value of NULL
+
+        o 'climograph'        :  -) now it plots the minimum and maximum temperature when they are provided 
+                                 -) new argument 'start.month' to choose the starting month for the climograph (1=Jan, 12=Dec).
+                                 -) new argument 'tmn.col' to choose the color to be used to plot the minimum monthly temperature
+                                 -) new argument 'tmx.col' to choose the color to be used to plot the maximum monthly temperature
+                                 -) new argument 'pcp.labels' to decide whether to show the numeric values above the monthly precipitation bars
+                                 -) new argument 'tmean.labels' to decide whether to show the numeric values above the monthly mean temperature lines
+                                 -) new argument 'tmx.labels' to decide whether to show the numeric values above the monthly maximum temperature lines
+                                 -) new argument 'tmn.labels' to decide whether to show the numeric values above the monthly minimum temperature lines
+                                 -) new argument 'pcp.labels.cex' to specify the relative scaling of the monthly precipitation values shown in the climograph
+                                 -) new argument 'temp.labels.cex' to specify the relative scaling of the monthly air temperature values (mean, maximum, minimum) shown in the climograph
+                                 -) new arguments 'temp.labels.dx' and 'temp.labels.dy' to specify the position of air temperature labels
+                                 -) new argument 'plot.pcp.probs' to decide whether to show uncertainty values around the monthly mean precipitation values
+                                 -) new argument 'pcp.probs' to define the quantile values used to show uncertainty values around the monthly mean precipitation values
+                                 -) new argument 'plot.temp.probs' to decide whether to show uncertainty values around the monthly mean temperature values (and also around maximum and minimum temperature, when provided) 
+                                 -) new argument 'temp.probs' to define the quantile values used to show uncertainty values around the monthly mean temperature values (and also around maximum and minimum temperature, when provided) 
+                                 -) new argument 'temp.probs.col' to define the colors used to show uncertainty values around the monthly mean temperature values (and also around maximum and minimum temperature, when provided) 
+                                 -) new argument 'temp.probs.alpha' to define the transparency level applied to 'temp.probs.col'
+                                 -) new arguments 'lat' and 'lon' to define and show the latitude and longitude, respectively, for which the climograph was plotted.
+
+        o 'izoo2rzoo'         :  -) improved handling of sub-daily time series
+                                 -) new argument 'tz' to correctly handle sub-daily zoo objects
+                                 -) default value for 'date.fmt' argument was changed from "%Y-%m-%d" to missing (it is automatically detected based on the sampling frequency of 'x')
+                                 -) default value for 'tstep' argument was changed from "days" to missing (it is automatically detected based on the sampling frequency of 'x')
+        
+
+## New datasets
+        o 'Cauquenes7336001'  :  Daily time series of P, Tmx, Tmn, PET and Q for the catchment draining into the 'Cauquenes en El Arrayan' streamflow station.
+
+## Changes in datasets
+        o 'KarameaAtGorgeQts' : The time zone of this data sete was changed from "none" (i.e., your local time zone was used every time you loaded this dataset) to "UTC", in order to avoid missing datetimes at times where daylight saving time ocurred.
+
+
+## Bug fixes
+
+        o 'hydroplot'    : -) now it works correctly with zoo objects that have multiple columns, and separate (internal) functions are provided for zoo and data.frame objects.
+     
+        o 'sname2plot'   : -) now it works correctly with zoo objects that have multiple columns, and separate (internal) functions are provided for zoo and data.frame objects.
+    
+        o 'daily2annual' : -) for zoo objects, dates are correctly given in the output when FUN=min or FUN=max (e.g. for getting the date of the annual maximum or minimum)
+                           -) the '...' argument is now passed to FUN (thanks to Marfa Saldivia !))
+      
+        o 'daily2monthly': -) the '...' argument is now passed to FUN (thanks to Marfa Saldivia !))
+      
+        o 'season2names' : fixed typo: 'autumm' -> 'autumn' (thanks to Belinda Wilson !)
+
+## Removed functions
+        o hydrokrige, mspplot, gists2spt, hypsometric: they were deleted due to CRAN warning about the retirement (archiving) of rgdal, rgeos and maptools during October 2023, which forced to remove 'sp', 'gstat', 'automap', 'maptools', 'rgdal' packages from from DESCRIPTION and NAMESPACE files. These functions should be available in other spatial R packages (e.g., terra)
+
+## Removed datasets
+        o EbroCatchmentsCHE, EbroDEM1000m, EbroPPgis: they were deleted due to CRAN warning about the retirement (archiving) of rgdal, rgeos and maptools during October 2023, which forced to remove 'sp', 'gstat', 'automap', 'maptools', 'rgdal' packages from from DESCRIPTION and NAMESPACE files. These datasets will be available in other upcoming spatial R package developed for managing raster time series  (e.g., terra)
+
+## Package files
+        o Now hydroTSM requires R >= 3.5.0, due to the use of serialized objects (KarameaAtGeorge hourly streeamflows)
+
+        o sp, gstat, automap, maptools, rgdal: removed from DESCRIPTION and NAMESPACE files, due to CRAN warning about the retirement (archiving) of rgdal, rgeos and maptools during October 2023
+
+        o NAMESPACE file : 'hydroplot', 'sname2plot' and 'hypsometric' are now exported S3 methods
+
+        o new vignette: 'Tutorial for Introductory Analysis of Daily Streamflow Data with hydroTSM'
+
+
+# Changes in version 0.6-0   11-Mar-2020
         o Package tested against R Under development (unstable) (2020-03-10 r77920) -- "Unsuffered Consequences", following an imperative request made by CRAN.
         o Vignette on Introductory Analysis of Daily Precipitation was moved from Sweave to Knitr and now includes a climograph example
         o 'subdaily2daily'   : new argument 'start' to allow daily observations start at any time different from 00:00:00 UTC.
@@ -9,11 +113,11 @@ NEWS/ChangeLog for hydroTSM
         o 'dm2seasonal'      : class of objects is now tested in a way compatible with the upcoming R 4.0.0
         o 'matrixplot'       : class of objects is now tested in a way compatible with the upcoming R 4.0.0
 
-0.5-1   07-Aug-2017 (after CRAN comments)
+# Changes in version 0.5-1   07-Aug-2017 (after CRAN comments)
         o DESCRIPTION file   : -) 'Keywords' field completly removed
         o 'dwi'              : -) some examples were wrapped into 'dontrun' to avoid running times larger than 10s in CRAN.
 
-0.5-0   07-Aug-2017
+# Changes in version 0.5-0   07-Aug-2017
         o repository management moved from SVN to GIT, including rforge.
         o citation with DOI is now possible (and new CITATION file).
         o new function 'climograph' to draw a climograph based on precipitation and temperature data.
@@ -47,13 +151,13 @@ NEWS/ChangeLog for hydroTSM
                                -) 'start', 'end' and 'window', 'aggregate' are now explicitly imported from the 'stats' package (affects 'dwi', 'izoo2rzoo' and 'monthlyfunction')
                                -) Fifty three (53) S3 methods are now registered.
 
-0.4-2-1	22-Jan-2014 (after CRAN comments)
+# Changes in version 0.4-2-1	22-Jan-2014 (after CRAN comments)
         o 'Author' field was removed from DESCRIPTION file
         o 'WhatsNew.txt' file was renamed 'ChangeLog'
         o 'dwi'    : part of the 'Examples' section was marked as 'dontrun', because it execution took more than 5 seconds.
         o 'mspplot': part of the 'Examples' section was marked as 'dontrun', because it execution took more than 5 seconds.
 
-0.4-2	21-Jan-2014
+# Changes in version 0.4-2	21-Jan-2014
         o 'fdc'                        : -) 'lwd' argument is now used (thanks to Bernard Bisselink !)
                                          -) fixed error raised when some element(s) in x were equal to zero, 'plot=TRUE' and 'log=y' or 'log=xy'
                                             (thanks to David Young !). The error was: 
@@ -80,12 +184,12 @@ NEWS/ChangeLog for hydroTSM
         o 'xts' package removed from 'Imports' (due to changes in CRAN policies)
         o improved vignette (moved from Sweave to knitr)
 
-0.4-1	31-May-2013
+# Changes in version 0.4-1	31-May-2013
         o DESCRIPTION : 'xts' package was added to the 'Imports' section
         o 'fdc'       :  truncation of some lines in the PDF manual are fixed now.
         o 'sname2plot':  truncation of some lines in the PDF manual are fixed now.
 
-0.4-0	31-May-2013
+# Changes in version 0.4-0	31-May-2013
         o major changes: -) all the functions should now be compatible with sub-daily time series. See details below.
                          -) package is now tested against R 3.0.X
                          -) updated vignette. Now it includes some examples about computation of extreme indices of daily precipitation.
@@ -137,25 +241,24 @@ NEWS/ChangeLog for hydroTSM
         o NAMESPACE                    : functions from packages zoo and xts are now imported explicitly        	
 
 
-###################################################
-# Previous Releases (see old file 'ChangeLog)' #
-###################################################
+-- Previous Releases: see old file 'ChangeLog'
 
-0.3-6	18-Oct-2012
-0.3-5	04-Jul-2012
-0.3-4	03-May-2012
-0.3-3	07-Nov-2011
-0.3-2	15-Sep-2011
-0.3-1	14-Sep-2011
-0.3-0   01-Sep-2011
-0.2-2	14-Apr-2011
-0.2-1	30-Nov-2010
-0.2-0	10-Oct-2010
-0.1.7	05-Mar-2009 (It was never released, because it finally becomes v0.2-0)
-0.1.6	30-Nov-2009
-0.1.5	16-Nov-2009
-0.1.4	02-Nov-2009
-0.1.3	13-Oct-2009
-0.1.2	01-Oct-2009
-0.1.1	15-Sep-2009
-0.1.0	07-Sep-2009 (but the functions were developed since 2007)
+
+# version 0.3-6	 18-Oct-2012
+# version 0.3-5	 04-Jul-2012
+# version 0.3-4	 03-May-2012
+# version 0.3-3	 07-Nov-2011
+# version 0.3-2	 15-Sep-2011
+# version 0.3-1	 14-Sep-2011
+# version 0.3-0  01-Sep-2011
+# version 0.2-2	 14-Apr-2011
+# version 0.2-1	 30-Nov-2010
+# version 0.2-0	 10-Oct-2010
+# version 0.1.7	 05-Mar-2009 (It was never released, because it finally becomes v0.2-0)
+# version 0.1.6	 30-Nov-2009
+# version 0.1.5	 16-Nov-2009
+# version 0.1.4	 02-Nov-2009
+# version 0.1.3	 13-Oct-2009
+# version 0.1.2	 01-Oct-2009
+# version 0.1.1	 15-Sep-2009
+# version 0.1.0	 07-Sep-2009 (but the functions were developed since 2007)

@@ -1,7 +1,7 @@
 %% File hip.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroTSM/
-%% Copyright 2008-2013 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2022 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{hip}
@@ -17,7 +17,7 @@ Given any starting and ending date/time objects, it generates:  \cr
 2) the amount of hours between the two date/time objects 
 }
 \usage{
-hip(from, to, date.fmt="\%Y-\%m-\%d \%H", out.type = "seq")
+hip(from, to, date.fmt="\%Y-\%m-\%d \%H", out.type = "seq", tz="UTC")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,6 +35,10 @@ ONLY required when \code{class(dates)=="factor"} or \code{class(dates)=="numeric
 Character indicating the type of result that is given by this function. Valid values are: \cr
 1) \kbd{seq} : a vector of class Date with all the days between the two dates, OR \cr
 2) \kbd{nmbr}: a single numeric value with the amount of days between the two dates.
+}
+  \item{tz}{
+specification of the desired time zone yo be used. System-specific (see time zones), but \code{""} is the current time zone, and \code{"GMT"} (the default value) is UTC (Universal Time, Coordinated). See \code{\link[base]{Sys.timezone}} and \code{\link[base]{as.POSIXct}}. \cr
+This argument can be used when working with subdaily zoo objects to force using the local time zone instead of GMT as time zone.
 }
 }
 %%\details{
