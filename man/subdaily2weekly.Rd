@@ -1,7 +1,7 @@
 %%File daily2weekly.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 https://CRAN.R-project.org/package=hydroTSM
-%% Copyright 2023-2023 Mauricio Zambrano-Bigiarini
+%% Copyright 2023-2026 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{subdaily2weekly}
@@ -55,7 +55,7 @@ Logical. Should missing values be removed? \cr
 -) \kbd{FALSE}: if there is AT LEAST one NA within a month, the corresponing weekly values in the output object will be \code{NA}.
 }
   \item{na.rm.max}{
-Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each month to keep the weekly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given month is larger or equal than \code{na.rm.max} the corresponding weekly value will be \code{NA}.
+Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each week to keep the weekly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given week is larger than \code{na.rm.max} the corresponding weekly value will be \code{NA}.
 }
   \item{start}{
 character, indicating the starting time used for aggregating sub-daily time series into daily ones. It MUST be provided in the format specified by \code{start.fmt}. \cr
@@ -117,19 +117,9 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail}
 \code{\link{cmv}}, \code{\link{subhourly2hourly}}, \code{\link{daily2monthly}}, \code{\link{daily2annual}}, \code{\link{subdaily2daily}}, \code{\link{weeklyfunction}}, \code{\link{hydroplot}}, \code{\link{vector2zoo}}, \code{\link{izoo2rzoo}}, \code{\link{as.Date}}
 }
 \examples{
+
 ######################
-## Ex1: Computation of WEEKLY values from HOURLY ts, removing any missing value in 'x'
-
-## Loading the HOURLY streamflows for the station Karamea at Gorge
-data(KarameaAtGorgeQts)
-x <- KarameaAtGorgeQts
-
-# Sub-daily to weekly ts
-subdaily2weekly(x, FUN=mean, na.rm=TRUE)
-
-\dontrun{
-######################
-## Ex2: Computation of WEEKLY values from HOURLY ts, only when the percentage of NAs in 
+## Ex1: Computation of WEEKLY values from HOURLY ts, only when the percentage of NAs in 
 #       each week is lower than a user-defined percentage (10% in this example).
 
 ## Loading the HOURLY streamflows for the station Karamea at Gorge
@@ -137,8 +127,8 @@ data(KarameaAtGorgeQts)
 x <- KarameaAtGorgeQts
 
 # Subsetting 'x' to its first three weeks 
-# (Monday 2nd December 1985 - Sunday 29th uanuary 20th 1980)
-x <- window(x, end="1985-12-31 23:59:00")
+# (31-December-1979 to 31-March-1980)
+x <- window(x, end="1980-03-31 23:59:00")
 
 ## Transforming into NA the 10% of values in 'x'
 set.seed(10) # for reproducible results
@@ -153,8 +143,9 @@ x[na.index] <- NA
 # Verifying that the second and third month of 'x' had 10% or more of missing values
 cmv(x, tscale="weekly")
 
+\dontrun{
 ######################
-## Ex3: Computation of WEEKLY values from HOURLY ts, removing any missing value in 'x'
+## Ex2: Computation of WEEKLY values from HOURLY ts, removing any missing value in 'x'
 #       Loading the HOURLY streamflows for the station Karamea at Gorge
 data(KarameaAtGorgeQts)
 x <- KarameaAtGorgeQts

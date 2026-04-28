@@ -85,6 +85,7 @@ subdaily2daily.default <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00
 #          27-May-2021                                                         #
 #          11-Oct-2022                                                         #
 #          30-Jul-2023 ; 31-Jul-2023 ; 03-Aug-2023                             #
+#          05-Feb-2025 ; 25-Jul-2025 ; 26-Jul-2025 ; 31-Jul-2025               #
 ################################################################################
 subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00:00", 
                                start.fmt= "%H:%M:%S", tz, ...) {
@@ -101,6 +102,13 @@ subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00:00"
     if ( missing(FUN) | !is.function(FUN) )
       stop("Missing argument: 'FUN' must contain a valid function for aggregating the sub-daily values")
 
+    # Checking that 'na.rm.max' is in [0, 1]
+    if ( (na.rm.max < 0) | (na.rm.max > 1) )
+      stop("Invalid argument: 'na.rm.max' must be in [0, 1] !") 
+
+    if ( !zoo::is.regular(x, strict=FALSE) )
+      warning("'x' is not a regular '", sfreq(x), "' time series !. (see the 'izoo2rzoo' function)")
+
     # Automatic detection of 'tz'
     #if (missing(tz)) tz <- ""
     if (missing(tz)) tz <- format(time(x), "%Z")[1]
@@ -111,14 +119,14 @@ subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00:00"
       time.old <- time(x)
 
       # Converting the new starting time provided by the user into a POSIXct object
-      start <- as.POSIXct(start, format=start.fmt, tz=tz)
+      startFULL <- as.POSIXct(start, format=start.fmt, tz=tz)
 
       # normal staring time for a day
       nstart <- as.POSIXct("00:00:00", format="%H:%M:%S", tz=tz)
 
       # time difference between the desired starting time 'strat' and the "normal"
       # starting time 'nstart', [s]
-      delta <- difftime(start, nstart, units="secs")
+      delta <- difftime(startFULL, nstart, units="secs")
 
       # Computing teh time difference between 'start' and the "normal" starting time, [s]
       #time.new <- as.POSIXct(time.old, tz=tz) - delta
@@ -135,32 +143,27 @@ subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00:00"
     # The following lines of code makes sure that the missing elements in a day are actually 
     # considered as missing
 
-    st <- paste(format(start(x), "%Y-%m-%d"), "00:00:00", tz)
-    et <- paste(format(end(x), "%Y-%m-%d"), "23:59:59", tz)
-    x  <- izoo2rzoo(x, from=st, to=et, tz=tz)
+    #st <- paste(format(start(x), "%Y-%m-%d"), "00:00:00", tz)
+    #et <- paste(format(end(x), "%Y-%m-%d"), "23:59:59", tz)
+    #x  <- izoo2rzoo(x, from=st, to=et, tz=tz)
 
     # Computing the Daily time series 
     tmp <- aggregate(x, by= function(tt) format(tt, "%Y-%m-%d"), FUN=FUN, na.rm= na.rm, ...)
-
-
+    time(tmp) <- as.Date( time(tmp) )
+    
     # Removing annual values in the output object for days with 
     # more than 'na.rm.max' percentage of NAs in a given day
-    if ( na.rm & (na.rm.max != 0) ) {
-
-      # Checking that 'na.rm.max' is in [0, 1]
-      if ( (na.rm.max <0) | (na.rm.max <0) )
-        stop("Invalid argument: 'na.rm.max' must be in [0, 1] !")
+    if ( na.rm ) {
 
       # Computing the percentage of missing values in each day
       na.pctg <- cmv(x, tscale="daily", start=start, start.fmt=start.fmt, tz=tz)
 
       # identifying days with a percentage of missing values higher than 'na.rm.max'
-      na.pctg.index <- which( na.pctg >= na.rm.max)
+      na.pctg.index <- which( na.pctg > na.rm.max)
 
       # Setting as NA all the days with a percentage of missing values higher than 'na.rm.max'
       tmp[na.pctg.index] <- NA 
     } # IF end
-
 
     # Removing subdaily time attibute, but not the dates
     if (NCOL(tmp) == 1) {
@@ -175,7 +178,7 @@ subdaily2daily.zoo <- function(x, FUN, na.rm=TRUE, na.rm.max=0, start="00:00:00"
     # Replacing all the Inf and -Inf by NA's
     # min(NA:NA, na.rm=TRUE) == Inf  ; max(NA:NA, na.rm=TRUE) == -Inf
     inf.index <- which(is.infinite(tmp))
-    if ( length(inf.index) > 0 ) tmp[inf.index] <- NA      
+    if ( length(inf.index) > 0 ) tmp[inf.index] <- NA        
 
     return(tmp)
 

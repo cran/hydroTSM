@@ -2,7 +2,7 @@
 # Part of the hydroTSM R package, https://github.com/hzambran/hydroTSM ; 
 #                                 http://www.rforge.net/hydroTSM/ ; 
 #                                 https://cran.r-project.org/package=hydroTSM
-# Copyright 2008-2020 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2026 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 hydroplot <-function(x, ...) UseMethod("hydroplot")
@@ -133,6 +133,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 
       # Plotting only the original zoo or xts object, without moving averages and legends
       if ( pfreq == "o") {
+
           # Plotting the Daily Time Series
           zoo::plot.zoo(x, xaxt = "n", yaxt = "n", type="o", 
                    main=main, xlab=xlab, ylab=ylab, 
@@ -145,7 +146,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 
           # manually adding a grid
           grid(nx=NA, ny=NULL)
-          abline(v=time(x)[axTicksByTime(x)], col = "lightgray", lty = "dotted")
+          abline(v=time(x)[xts::axTicksByTime(x)], col = "lightgray", lty = "dotted")
       } # IF end
 
 
@@ -166,7 +167,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 
           # manually adding a grid
           grid(nx=NA, ny=NULL)
-          abline(v=time(x)[axTicksByTime(x)], col = "lightgray", lty = "dotted")
+          abline(v=time(x)[xts::axTicksByTime(x)], col = "lightgray", lty = "dotted")
 
           if (d.ma1) {
             # Plotting the 1st Moving Average of the Daily time series. If win.len1=365*1 => "Annual Moving Average"
@@ -213,7 +214,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 
         # manually adding a grid
         grid(nx=NA, ny=NULL)
-        abline(v=time(x)[axTicksByTime(x.monthly)], col = "lightgray", lty = "dotted")
+        abline(v=time(x)[xts::axTicksByTime(x.monthly)], col = "lightgray", lty = "dotted")
 
         if (m.ma1) {
         # Plotting the 1st Moving Average of the Daily time series. If win.len1=365*1 => "Annual Moving Average"
@@ -257,7 +258,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 
           # manually adding a grid
           grid(nx=NA, ny=NULL)
-          abline(v=time(x)[axTicksByTime(x.annual)], col = "lightgray", lty = "dotted")
+          abline(v=time(x)[xts::axTicksByTime(x.annual)], col = "lightgray", lty = "dotted")
       } # IF end
 
 } # '.hydroplotts' end
@@ -431,6 +432,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 # Started: 19-Jun-2011                                                  #
 # Updates: 10-Aug-2011                                                  #
 #          06-Aug-2017                                                  #
+#          26-Apr-2026                                                  #
 #########################################################################
 .hydroplotseasonal <- function(x, FUN, na.rm=TRUE,
 		               tick.tstep= "auto", lab.tstep= "auto", lab.fmt=NULL,
@@ -501,7 +503,11 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
       # Plotting seasonal time series #
       #################################
       def.par <- par(no.readonly = TRUE) # save default, for resetting... 
-      on.exit(par(def.par))
+      # To ensure both graphical parameters (par) and layout are restored deterministically.
+      on.exit({ 
+        par(def.par)
+        layout(1)
+      })
       
       layout( matrix( c(1,1,1,1,1,1,1,1,1,5,5,2,2,2,2,2,2,2,2,2,6,6,3,3,3,3,3,3,3,3,3,7,7,4,4,4,4,4,4,4,4,4,8,8), ncol=11, byrow=TRUE) ) 
       
@@ -518,7 +524,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
         abline(h=h[1], col="red", lty=2)
         # manually adding a grid
         grid(nx=NA, ny=NULL)
-        abline(v=time(x)[axTicksByTime(winter)], col = "lightgray", lty = "dotted")
+        abline(v=time(x)[xts::axTicksByTime(winter)], col = "lightgray", lty = "dotted")
                 
         # spring
         zoo::plot.zoo(spring, xaxt = "n", yaxt = "n", type="o", 
@@ -531,7 +537,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
         abline(h=h[2], col="red", lty=2)
         # manually adding a grid
         grid(nx=NA, ny=NULL)
-        abline(v=time(x)[axTicksByTime(spring)], col = "lightgray", lty = "dotted")
+        abline(v=time(x)[xts::axTicksByTime(spring)], col = "lightgray", lty = "dotted")
                 
         # summer
         zoo::plot.zoo(summer, xaxt = "n", yaxt = "n", type="o", 
@@ -544,7 +550,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
         abline(h=h[3], col="red", lty=2)
         # manually adding a grid
         grid(nx=NA, ny=NULL)
-        abline(v=time(x)[axTicksByTime(summer)], col = "lightgray", lty = "dotted")
+        abline(v=time(x)[xts::axTicksByTime(summer)], col = "lightgray", lty = "dotted")
       
         # autumm
         zoo::plot.zoo(autumm, xaxt = "n", yaxt = "n", type="o", 
@@ -557,7 +563,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
         abline(h=h[4], col="red", lty=2)
         # manually adding a grid
         grid(nx=NA, ny=NULL)
-        abline(v=time(x)[axTicksByTime(autumm)], col = "lightgray", lty = "dotted")
+        abline(v=time(x)[xts::axTicksByTime(autumm)], col = "lightgray", lty = "dotted")
       
       #################################
       # Plotting seasonal boxplots    #
@@ -592,6 +598,7 @@ hydroplot <-function(x, ...) UseMethod("hydroplot")
 #          04-Jun-2012                                                         #
 #          04-Apr-2013 ; 29-May-2013                                           #
 #          07-Nov-2020                                                         #
+#          31-Oct-2025                                                         #
 ################################################################################
 hydroplot.default <- function(x, 
                               FUN, na.rm=TRUE,
@@ -610,9 +617,9 @@ hydroplot.default <- function(x,
                               cex.lab=1.3,
                               cex.axis=1.3,
                               col=c("blue", "lightblue", "lightblue"),
-                              from=NULL, 
-                              to=NULL,
-                              dates=1, date.fmt = "%Y-%m-%d",
+                              from=start(x), 
+                              to=end(x),
+                              dates=1, date.fmt = "%Y-%m-%d", tz=NULL, 
                               stype="default",
                               season.names=c("Winter", "Spring", "Summer", "Autumn"),
                               h=NULL, ...) {
@@ -638,6 +645,8 @@ hydroplot.default <- function(x,
 #          04-Jun-2012                                                         #
 #          04-Apr-2013 ; 29-May-2013                                           #
 #          07-Nov-2020                                                         #
+#          04-Sep-2024                                                         #
+#          31-Oct-2025                                                         #
 ################################################################################
 # 9 plots:
 # 1: Line plot with Daily time series, with 2 moving averages, specified by 'win.len1' and 'win.len2'
@@ -666,9 +675,9 @@ hydroplot.zoo <- function(x,
                           cex.lab=1.3,
                           cex.axis=1.3,
                           col=c("blue", "lightblue", "lightblue"),
-                          from=NULL, 
-                          to=NULL,
-                          dates=1, date.fmt = "%Y-%m-%d",
+                          from=start(x), 
+                          to=end(x),
+                          dates=1, date.fmt = "%Y-%m-%d", tz=NULL, 
                           stype="default",
                           season.names=c("Winter", "Spring", "Summer", "Autumn"),
                           h=NULL, ...) {
@@ -694,10 +703,8 @@ hydroplot.zoo <- function(x,
        if (is.na(match(pfreq, c("o", "dma", "dm", "ma", "seasonal"))))
           stop("Invalid argument: 'pfreq' must be in c('o', 'dma', 'ma', 'dm', 'seasonal')")
      } else if ( sfreq(x) == "monthly" ) {
-         if (is.na(match(pfreq, c("ma", "seasonal")))) {
-            message("[Warning: 'x' is a monthly object, so 'pfreq' has been changed to 'ma']")
-            pfreq <- "ma"
-         }
+         if (is.na(match(pfreq, c("o", "ma", "seasonal")))) 
+           stop("Invalid argument: 'pfreq' must be in c('o', 'ma', 'seasonal')")
        } # ELSE end
 
      if ( (pfreq == "o") & (ptype != "ts") ) {
@@ -733,21 +740,10 @@ hydroplot.zoo <- function(x,
      dates  <- time(x)
      ndates <- length(dates)
      
-     # Checking the validity of the 'from' argument
-     if (!is.null(from)) { 
-        from <- as.Date(from, format=date.fmt)
-        if ( !(from %in% dates) ) {
-           stop("Invalid argument: 'from' is not in 'dates' ")
-        } else x <- window(x, start=from)
-     } # IF end
-
-     # Checking the validity of the 'to' argument
-     if (!is.null(to)) { 
-        to <- as.Date(to, format=date.fmt)
-        if ( !(from %in% dates) ) {
-           stop("Invalid argument: 'to' is not in 'dates' ")
-        } else x <- window(x, end=to)
-     } # IF end
+     # Checking the validity of the 'from' and 'to' arguments and 
+     if ( sfreq(x) %in% c("minute", "hourly") )
+       date.fmt <- "%Y-%m-%d %H:%M:%S"
+     x <- check_from_and_to_and_subset(x, from=from, to=to, date.fmt=date.fmt, tz)
 
 
      #################
@@ -815,19 +811,19 @@ hydroplot.zoo <- function(x,
        if ( sfreq(x) == "daily" ) {
          x.monthly <- daily2monthly(x, FUN=FUN, na.rm=na.rm)
        } else if ( sfreq(x) == "monthly" ) {
-          x.monthly <- x
-          } else x.monthly <- NA
+           x.monthly <- x
+         } else x.monthly <- NA
 
        # Computing the annual time series
        if ( !is.na( match( sfreq(x), c("daily", "monthly") ) ) ) {
          x.annual <- daily2annual(x, FUN=FUN, na.rm=na.rm, out.fmt="%Y-%m-%d")
        } else if ( sfreq(x) == "annual" ) {
-          x.annual <- x
-          } else x.annual <- NA
+           x.annual <- x
+         } else x.annual <- NA
 
      } else {
-       x.monthly <- NA
-       x.annual  <- NA
+         x.monthly <- NA
+         x.annual  <- NA
        } # ELSE end   
      
 
@@ -841,6 +837,23 @@ hydroplot.zoo <- function(x,
          } else if (pfreq %in% c("dm", "ma")) { 
             par(mfcol=c(2,1))
            } # ELSE end
+
+       # if 'x' and 'y' are subdaily ts, 'tick.tstep', 'lab.tstep' and 'lab.fmt' are adopted
+       if (sfreq(x) %in% c("minute", "hourly") ) {
+         nmonths <- hydroTSM::mip(from=start(x), to=end(x), out.type="nmbr")
+
+         if (nmonths <= 40) { # 40 months or less
+           if (tick.tstep=="auto") tick.tstep <- "days"
+           if (lab.tstep=="auto") lab.tstep <- "months"
+           if ( is.null(lab.fmt) ) lab.fmt <- "%Y-%b"
+         } else {
+             if (tick.tstep=="auto") tick.tstep <- "months"
+             if (lab.tstep=="auto") lab.tstep <- "years"
+             if ( is.null(lab.fmt) ) lab.fmt <- "%Y"
+           } # ELSE end     
+
+       } # IF end
+
        # Drawing the daily, monthly and annual time series of the variable against time
        .hydroplotts(x=x, x.monthly=x.monthly, x.annual=x.annual, pfreq=pfreq,
                     win.len1=win.len1, win.len2=win.len2, var.type=var.type, 
@@ -921,6 +934,7 @@ hydroplot.zoo <- function(x,
 #          04-Apr-2013 ; 29-May-2013                                           #
 #          07-Nov-2020                                                         #
 #          23-Aug-2022                                                         #
+#          31-Oct-2025                                                         #
 ################################################################################
 hydroplot.data.frame <- function(x, 
                                  FUN, na.rm=TRUE,
@@ -939,9 +953,9 @@ hydroplot.data.frame <- function(x,
                                  cex.lab=1.3,
                                  cex.axis=1.3,
                                  col=c("blue", "lightblue", "lightblue"),
-                                 from=NULL, 
-                                 to=NULL,
-                                 dates=1, date.fmt = "%Y-%m-%d",
+                                 from=start(x), 
+                                 to=end(x),
+                                 dates=1, date.fmt = "%Y-%m-%d", tz=NULL, 
                                  stype="default",
                                  season.names=c("Winter", "Spring", "Summer", "Autumn"),
                                  h=NULL, ...) {

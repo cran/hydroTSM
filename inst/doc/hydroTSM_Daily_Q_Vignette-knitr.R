@@ -2,12 +2,12 @@
 knitr::opts_chunk$set(echo = TRUE)
 
 ## ----installation1, eval=FALSE------------------------------------------------
-#  install.packages("hydroTSM")
+# install.packages("hydroTSM")
 
 ## ----installation2, eval=FALSE------------------------------------------------
-#  if (!require(devtools)) install.packages("devtools")
-#  library(devtools)
-#  install_github("hzambran/hydroTSM")
+# if (!require(devtools)) install.packages("devtools")
+# library(devtools)
+# install_github("hzambran/hydroTSM")
 
 ## ----LoadingPkg---------------------------------------------------------------
 library(hydroTSM)
@@ -75,10 +75,10 @@ fdc2 <- fdc(Q)
 fdc3 <- fdc(Q, log="x")
 
 ## ----FDC1---------------------------------------------------------------------
-fdc1 <- fdc(Q, log="")
+fdc1 <- fdc(Q, log="", thr.pos="topright")
 
 ## ----baseflow1, eval=FALSE----------------------------------------------------
-#  baseflow(Q)
+# baseflow(Q)
 
 ## ----baseflow2, eval=TRUE, R.options=list(max.print=20)-----------------------
 baseflow(Q, na.fill="spline") 
@@ -95,8 +95,8 @@ baseflow(Q, na.fill="spline", from="2000-04-01", to="2000-12-31",
 
 ## ----echo=FALSE---------------------------------------------------------------
 sessionInfo()$platform
-sessionInfo()$R.version$version.string 
-paste("hydroTSM", sessionInfo()$otherPkgs$hydroTSM$Version)
+sessionInfo()$R.version$version.string
+paste("hydroTSM"  , sessionInfo()$otherPkgs$hydroTSM$Version)
 
 ## ----FAQmatrixplot1, fig.width = 8, fig.height = 7, , dpi=100, fig.align = "center", dev.args=list(pointsize = 9)----
 library(hydroTSM)

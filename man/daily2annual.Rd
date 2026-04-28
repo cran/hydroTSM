@@ -1,7 +1,7 @@
 %% File daily2annual.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 https://CRAN.R-project.org/package=hydroTSM
-%% Copyright 2008-2023 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2025 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{(sub)daily2annual}
@@ -22,7 +22,7 @@
 \alias{subdaily2annual.data.frame}
 \alias{subdaily2annual.matrix}
 
-
+%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 (sub)Daily/Monthly -> Annual 
 }
@@ -34,15 +34,20 @@ daily2annual(x, ...)
 subdaily2annual(x, ...)
 monthly2annual(x, ...)
 
-\method{daily2annual}{default}(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="\%Y", ...)
+\method{daily2annual}{default}(x, FUN, na.rm=TRUE, na.rm.max=0, 
+        out.fmt=c("\%Y", "\%Y-\%m-\%d"), start.month=1, ...)
 
-\method{daily2annual}{zoo}(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="\%Y-\%m-\%d", ...)
+\method{daily2annual}{zoo}(x, FUN, na.rm=TRUE, na.rm.max=0, 
+        out.fmt=c("\%Y", "\%Y-\%m-\%d"), start.month=1, ...) 
 
-\method{daily2annual}{data.frame}(x, FUN, na.rm=TRUE, na.rm.max=0, out.fmt="\%Y", dates=1, 
+\method{daily2annual}{data.frame}(x, FUN, na.rm=TRUE, na.rm.max=0, 
+        out.fmt=c("\%Y", "\%Y-\%m-\%d"), start.month=1, dates=1, 
         date.fmt = "\%Y-\%m-\%d", out.type = "data.frame", verbose = TRUE, ...)
 
-\method{daily2annual}{matrix}(x, FUN, na.rm = TRUE, na.rm.max=0, out.fmt="\%Y", 
-        dates=1, date.fmt = "\%Y-\%m-\%d", out.type = "data.frame", verbose = TRUE, ...)
+\method{daily2annual}{matrix}(x, FUN, na.rm = TRUE, na.rm.max=0, 
+        out.fmt=c("\%Y", "\%Y-\%m-\%d"), start.month=1, 
+        dates=1, date.fmt = "\%Y-\%m-\%d", out.type = "data.frame", 
+        verbose = TRUE,  ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,13 +68,16 @@ Logical. Should missing values be removed? \cr
 -) \kbd{FALSE}: if there is AT LEAST one NA within a year, the corresponing annual values in the output object will be \code{NA}.
 }
   \item{na.rm.max}{
-Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each year to keep the yearly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given year is larger or equal than \code{na.rm.max} the corresponding annual value will be \code{NA}.
+Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each year to keep the yearly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given year is larger than \code{na.rm.max} the corresponding annual value will be \code{NA}.
 }
   \item{out.fmt}{
 Character indicating the date format for the output zoo object. See \code{format} in \code{\link[base]{as.Date}}. Possible values are: \cr
 -) \kbd{\%Y}        : only the year will be used for the time. Default option. (e.g., "1961" "1962"...) \cr
 -) \kbd{\%Y-\%m-\%d}: a complete date format will be used for the time. (e.g., "1961-01-01" "1962-01-01"...). See Details.
 }
+  \item{start.month}{
+ numeric in [1,..,12], representing the starting month (1:Jan, ..., 12:Dec) to be used in the computation of annual values. By default \code{start.month=1}.
+ }
   \item{dates}{
 numeric, factor or Date object indicating how to obtain the dates for corresponding to each gauging station \cr
 If \code{dates} is a number (default), it indicates the index of the column in \code{x} that stores the dates \cr
@@ -150,7 +158,7 @@ data(SanMartinoPPts)
 x <- SanMartinoPPts
 
 # Subsetting 'x' to its first three months (Jan/1921 - Mar/1921)
-x <- window(x, end="1921-03-31")
+x <- window(x, end="1921-12-31")
 
 ## Transforming into NA the 10% of values in 'x'
 set.seed(10) # for reproducible results
@@ -173,8 +181,8 @@ daily2annual(x, FUN=max)
 
 
 ######################
-## Ex4: Monthly to Annual (same result as )
-m <- daily2monthly(x, FUN=sum, na.rm=TRUE)
+## Ex4: Monthly to Annual, allowing a maximum of 20% of missing values in each month 
+m <- daily2monthly(x, FUN=sum, na.rm=TRUE, na.rm.max=0.2)
 monthly2annual(m, FUN=sum, na.rm=TRUE)
 
 

@@ -2,12 +2,12 @@
 knitr::opts_chunk$set(echo = TRUE)
 
 ## ----installation1, eval=FALSE------------------------------------------------
-#  install.packages("hydroTSM")
+# install.packages("hydroTSM")
 
 ## ----installation2, eval=FALSE------------------------------------------------
-#  if (!require(devtools)) install.packages("devtools")
-#  library(devtools)
-#  install_github("hzambran/hydroTSM")
+# if (!require(devtools)) install.packages("devtools")
+# library(devtools)
+# install_github("hzambran/hydroTSM")
 
 ## ----LoadingPkg---------------------------------------------------------------
 library(hydroTSM)

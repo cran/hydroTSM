@@ -25,24 +25,26 @@ cmv(x, ...)
 \method{cmv}{default}(x, tscale=c("hourly", "daily", "weekly", "monthly", 
             "quarterly", "seasonal", "annual"),
             out.type=c("percentage", "amount"), dec=3, 
-            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz, ...)
+            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz,
+            start.month=1, ...)
 
 \method{cmv}{zoo}(x, tscale=c("hourly", "daily", "weekly", "monthly", 
             "quarterly", "seasonal", "annual"),
             out.type=c("percentage", "amount"), dec=3, 
-            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz, ...)
+            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz,
+            start.month=1, ...)
 
 \method{cmv}{data.frame}(x, tscale=c("hourly", "daily", "weekly", "monthly", 
             "quarterly", "seasonal", "annual"),
             out.type=c("percentage", "amount"), dec=3, 
-            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz, 
-            dates=1, date.fmt="\%Y-\%m-\%d", ...)
+            start="00:00:00", start.fmt= "\%H:\%M:\%S", tz,
+            start.month=1, dates=1, date.fmt="\%Y-\%m-\%d", ...)
 
 \method{cmv}{matrix}(x, tscale=c("hourly", "daily", "weekly", "monthly", 
             "quarterly", "seasonal", "annual"),
             out.type=c("percentage", "amount"), dec=3, 
             start="00:00:00", start.fmt= "\%H:\%M:\%S", tz,
-            dates=1, date.fmt="\%Y-\%m-\%d", ...)
+            start.month=1, dates=1, date.fmt="\%Y-\%m-\%d", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -75,6 +77,9 @@ It is useful when the daily values start at a time different from \code{"00:00:0
 }
   \item{start.fmt}{
 character indicating the format in which the time is provided in \code{start}, By default \code{date.fmt=\%H:\%M:\%S}. See \code{format} in \code{\link[base]{as.POSIXct}}.
+}
+  \item{start.month}{
+ numeric in [1,..,12], representing the starting month (1:Jan, ..., 12:Dec) to be used in the computation of annual values. By default \code{start.month=1}.
 }
   \item{tz}{
 character, with the specification of the time zone used in both \code{x} and \code{start}. System-specific (see time zones), but \code{""} is the current time zone, and \code{"GMT"} is UTC (Universal Time, Coordinated). See \code{\link[base]{Sys.timezone}} and \code{\link[base]{as.POSIXct}}. \cr
@@ -129,6 +134,9 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail}
 data(SanMartinoPPts)
 x <- SanMartinoPPts
 
+# Subsetting to only the 1981-1990 temporal period
+x <- window(x, start="1981-01-01", end="1990-12-31")
+
 ## Transforming into NA the 10% of values in 'x'
 n           <- length(x)
 n.nas       <- round(0.1*n, 0)
@@ -154,6 +162,9 @@ cmv(x, tscale="annual")
 ## Karamea at Gorge (52579 hourly values)
 data(KarameaAtGorgeQts)
 x <- KarameaAtGorgeQts
+
+# Subsetting to only the first two years (1981-1982)
+x <- window(x, end=as.POSIXct("1982-12-31 23:59:00", tz="UTC") )
 
 ## Transforming into NA the 30% of values in 'x'
 n           <- length(x)

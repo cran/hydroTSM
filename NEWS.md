@@ -1,7 +1,85 @@
 NEWS/ChangeLog for hydroTSM
 
 --------------------------
-# Changes in version 0.7-0  16-Jan-2024
+
+# Changes in version 0.8-6  27-Apr-2026
+
+## Package files   
+        o NAMESPACE file: 'shiftyears' function is now explicitly exported (to be used in the hydroGOF R package).
+
+# Changes in version 0.8-5  27-Apr-2026
+
+## Package files   
+        o 'subdaily2weekly': modified examples to effectively reduce, as much as possible, the computation time in CRAN (to avoid a NOTE).
+
+
+# Changes in version 0.8-2 to 0.8-4 27-Apr-2026
+
+## Package files   
+        o 'subdaily2weekly': modified examples to reduce the computation time in CRAN (to avoid a NOTE).
+
+
+# Changes in version 0.8-1  27-Apr-2026
+
+## Package files   
+        o DESCRIPTION file: Joschka Thurner is now correctly recognised as contributor of the package (he should have been in v0.7-0, but I forgot to do it).  
+        o CITATION file: The DOI was changed form the one given by Zotero to the new DOI given by CRAN (10.32614/CRAN.package.hydroTSM) since June 2024.
+
+
+# Changes in version 0.8-0  27-Apr-2026
+
+## New functions
+        o 'isComplete'        : for testing for identifying whether a zoo object has a regular time frequency without missing values from the first one to the last one
+        o 'shiftyears'        : to allow the computation of annual values starting in a month different from january. Mostly for internal purposes only.
+
+
+## New features   
+        o 'baseflow'          :  -) it can apply the filter more than three times (see new 'n.pass' argument), which should be mandatory for hourly time series (Ladson et al., 2013)
+                                 -) new arguments: 'n.pass' 'pass.start'
+        o 'matrixplot'        :  -) new arguments: cuts,  cuts.dec=2, cuts.labels, cuts.style, legend.cex, legend.title, legend.title.cex, legend.fontsize.
+        o 'daily2annual'      :  -) new argument 'start.month' to choose the starting month to be used in the computation of annual values.
+                                    By default 1 (Jan)
+        o 'cmv'               :  -) new argument 'start.month' to choose the starting month to be used in the computation of annual values.
+                                    By default 1 (Jan)
+        o 'fdc'               :  -) new arguments: 'thr.pos' 
+
+## Bug fixes
+        o 'izoo2rzoo'         :  -) argument 'tz' is now able to correctly handle sub-daily zoo objects, with or without specification of a value by the user.
+                                 -) new argument 'na.action' to allow replacing existing NA values with linear or spline interpolation or to keep them.
+        o 'subhourly2hourly'  :  -) new argument 'tz' to correctly handle sub-daily zoo objects, with or without specification of a value by the user.
+                                 -) 'na.rm.max' is now correctly verified to be in [0, 1]
+                                 -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max'
+        o 'subhourly2nminutes':  -) new argument 'tz' to correctly handle sub-daily zoo objects, with or without specification of a value by the user.
+        o 'subdaily2daily'    :  -) 'na.rm.max' is now correctly verified to be in [0, 1]
+                                 -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max'
+        o 'daily2monthly'     :  -) 'na.rm.max' is now correctly verified to be in [0, 1]
+                                 -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max'
+        o 'daily2annual'      :  -) 'na.rm.max' is now correctly verified to be in [0, 1]. Thanks to Hector Garces for reporting it !.
+                                 -) now it correctly aggregates the daily values into annual ones when 'na.rm' is a missing argument
+                                 -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max' corresponding annual value will be ‘NA’.
+        o 'daily2weekly'      :  -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max'
+        o 'subdaily2weekly'   :  -) now it correctly set as NA annual values where the percentage of missing values is larger (not larger or equal) than 'na.rm.max'
+        o 'hydroplot'         :  -) now it correctly works with monthly objects when 'pfreq=o'
+                                 -) now it correctly works with subdaily objects when 'pfreq=o' 
+                                 -) improved visualization of time axis for subdaily objects when 'pfreq=o' 
+                                 -) default value for 'from' argument was changed from NULL to 'start(x)'.
+                                 -) default value for 'to' argument was changed from NULL to 'end(x)'.
+                                 -) new argument 'tz', to make it more flexible with sub-daily zoo objects.
+                                 -) small changes to avoid invalid graphics state.
+        o 'plot_pq'           :  -) small changes to avoid invalid graphics state.
+        o 'matrixplot'        :  -) cluttered legend is now avoided, and a maximum of 10 levels ffor the legend is anow allowed
+
+
+
+## Package files
+        o Now hydroTSM imports the 'timechange' package, in order to allow the correct handling of time zones in the 'izoo2rzoo' function.
+        o "new internal function 'check_from_and_to_and_subset' to allow subsetting a zoo object, with verification of the starting and ending definition of the user-defined subseting window.
+        o hydroTSM now has a graphical logo.  
+        o hydroTSM now has a webpage (https://hzambran.github.io/hydroTSM/), created by pkgdown.     
+       
+
+
+# Changes in version 0.7-0  17-Jan-2024
 
 ## New functions
         o 'baseflow'          : for computing baseflow using the filter proposed by Arnold and Allen (1999). 
@@ -77,7 +155,6 @@ NEWS/ChangeLog for hydroTSM
 
 
 ## Bug fixes
-
         o 'hydroplot'    : -) now it works correctly with zoo objects that have multiple columns, and separate (internal) functions are provided for zoo and data.frame objects.
      
         o 'sname2plot'   : -) now it works correctly with zoo objects that have multiple columns, and separate (internal) functions are provided for zoo and data.frame objects.
@@ -104,6 +181,11 @@ NEWS/ChangeLog for hydroTSM
 
         o new vignette: 'Tutorial for Introductory Analysis of Daily Streamflow Data with hydroTSM'
 
+        o Github Actions are used now to test the source code against stable and development R versions on Windows, Ubuntu and MacOS.
+
+        o pkgdown is now used to created the webpage of the package: https://hzambran.github.io/hydroTSM.
+
+        o CITATION file: citEntry changed to bibentry, after notes that prevented acceptance on CRAN.
 
 # Changes in version 0.6-0   11-Mar-2020
         o Package tested against R Under development (unstable) (2020-03-10 r77920) -- "Unsuffered Consequences", following an imperative request made by CRAN.

@@ -1,7 +1,7 @@
 %%File daily2monthly.Rd
 %% Part of the hydroTSM R package, http://www.rforge.net/hydroTSM/ ; 
 %%                                 https://CRAN.R-project.org/package=hydroTSM
-%% Copyright 2008-2023 Mauricio Zambrano-Bigiarini
+%% Copyright 2008-2025 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{(sub)daily2monthly}
@@ -57,7 +57,7 @@ Logical. Should missing values be removed? \cr
 -) \kbd{FALSE}: if there is AT LEAST one NA within a month, the corresponing monthly values in the output object will be \code{NA}.
 }
   \item{na.rm.max}{
-Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each month to keep the monthly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given month is larger or equal than \code{na.rm.max} the corresponding monthly value will be \code{NA}.
+Numeric in [0, 1]. It is used to define the maximum percentage of missing values allowed in each month to keep the monthly aggregated value in the output object of this function. In other words, if the percentage of missing values in a given month is larger than \code{na.rm.max} the corresponding monthly value will be \code{NA}.
 }
   \item{dates}{
 numeric, factor or Date object indicating how to obtain the dates for each gauging station \cr
@@ -130,6 +130,10 @@ x[na.index] <- NA
 
 ## Agreggating from Daily to Monthly, removing any missing value in 'x'
 m <- daily2monthly(x, FUN=sum, na.rm=TRUE)
+
+## Agreggating from Daily to Monthly, removing any missing value in 'x', but now
+## allowing a maximum of 20% of missing values in each month 
+m <- daily2monthly(x, FUN=sum, na.rm=TRUE, na.rm.max=0.2)
 
 ######################
 ## Ex2: Computation of monthly values only when the percentage of NAs in each
